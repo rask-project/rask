@@ -13,6 +13,9 @@ ApplicationWindow {
     title: "Rask Window"
     flags: nativeWindow.translucent ? (Qt.Window | Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint) : Qt.Window
     color: nativeWindow.translucent ? "transparent" : palette.window
+    // ApplicationWindow pads its content by the safe area (Qt 6.9+); the title
+    // bar draws in the toolbar area itself, like Konsoll's tab strip.
+    topPadding: 0
 
     NativeWindow {
         id: nativeWindow
@@ -24,13 +27,15 @@ ApplicationWindow {
         unifiedToolbar: root.visibility !== Window.FullScreen
     }
 
-    // The title bar: starts after the window buttons; a double click does what System Settings says.
+    // The title bar covers the toolbar area with the window buttons in it, its
+    // content starting after them; a double click does what System Settings says.
     Item {
         id: titleBar
 
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: 52
+        height: Math.max(root.SafeArea.margins.top, 40)
 
         // Native Liquid Glass behind the bar (macOS 26+), else the same look drawn in QML.
         GlassEffect {

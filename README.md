@@ -63,6 +63,12 @@ The native glass view sits behind the Qt content (above the window blur) and
 follows the item's geometry, visibility and opacity every frame; QML drawn
 over the item shows on top of it. It needs a `NativeWindow`.
 
+Title-bar content (a tab strip, a glass bar) goes at `y: 0` with the height
+of the toolbar area, `Math.max(window.SafeArea.margins.top, 40)`, starting
+after `NativeWindow.leadingInset`. An `ApplicationWindow` pads its content by
+the safe area since Qt 6.9, which pushes it below the toolbar: set
+`topPadding: 0` (or use a plain `Window`, as Konsoll does).
+
 ### Dialogs
 
 ```qml
