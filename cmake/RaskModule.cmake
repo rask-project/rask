@@ -4,6 +4,7 @@
 #     [OTHER_SOURCES ...]    # everywhere else (the no-op stubs)
 #     [PUBLIC_HEADERS ...]   # installed to include/Rask/<Name>
 #     [QML_FILES ...]
+#     [RESOURCES ...]        # files in the library's resources, under qrc:/qt/qml/Rask/<Name>/
 #     [LIBRARIES ...]        # linked privately
 #     [APPLE_LIBRARIES ...]  # linked privately on macOS
 #     [PUBLIC_LIBRARIES ...])
@@ -17,7 +18,7 @@
 function(rask_add_qml_module name)
     cmake_parse_arguments(PARSE_ARGV 1 arg ""
         "URI"
-        "SOURCES;APPLE_SOURCES;OTHER_SOURCES;PUBLIC_HEADERS;QML_FILES;LIBRARIES;APPLE_LIBRARIES;PUBLIC_LIBRARIES")
+        "SOURCES;APPLE_SOURCES;OTHER_SOURCES;PUBLIC_HEADERS;QML_FILES;RESOURCES;LIBRARIES;APPLE_LIBRARIES;PUBLIC_LIBRARIES")
 
     string(TOLOWER "${name}" lower)
     string(TOUPPER "${name}" upper)
@@ -35,9 +36,12 @@ function(rask_add_qml_module name)
         list(APPEND sources ${arg_OTHER_SOURCES})
     endif()
 
-    set(qml_files_arg)
+    set(optional_args)
     if(arg_QML_FILES)
-        set(qml_files_arg QML_FILES ${arg_QML_FILES})
+        list(APPEND optional_args QML_FILES ${arg_QML_FILES})
+    endif()
+    if(arg_RESOURCES)
+        list(APPEND optional_args RESOURCES ${arg_RESOURCES})
     endif()
 
     qt_add_library(${target} SHARED)
@@ -46,7 +50,7 @@ function(rask_add_qml_module name)
         URI ${arg_URI}
         VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
         SOURCES ${sources}
-        ${qml_files_arg}
+        ${optional_args}
     )
 
     set(export_header "${PROJECT_BINARY_DIR}/src/Rask/${name}/rask${lower}_export.h")
@@ -77,6 +81,9 @@ function(rask_add_qml_module name)
         PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}
     )
+
+    # Flag padded class layouts in Debug (the member ordering rule in AGENTS.md).
+    target_compile_options(${target} PRIVATE $<$<CONFIG:Debug>:-Wpadded>)
 
     target_link_libraries(${target}
         PUBLIC Qt6::Core Qt6::QmlIntegration ${arg_PUBLIC_LIBRARIES}

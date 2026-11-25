@@ -9,3 +9,6 @@ endfunction()
 
 rask_add_test(tst_appearance Rask::Platform)
 rask_add_test(tst_nativewindow Rask::Window)
+
+rask_add_test(tst_dialogs Rask::Dialogs)
+rask_add_test(tst_updater Rask::Updater)

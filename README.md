@@ -9,6 +9,8 @@ as QML modules named `Rask.*`, built as shared libraries.
 |---|---|
 | `Rask.Platform` | `Appearance` (singleton): the user's light/dark choice, saved and applied app-wide |
 | `Rask.Window` | `NativeWindow`: translucent, blurred window with the content under the title bar, window-button inset, title-bar double click |
+| `Rask.Dialogs` | `AboutDialog` (the system About panel), `AboutQtDialog`, `Alert` (`NSAlert`, as a sheet when given a window) |
+| `Rask.Updater` | `Updater` (singleton): Sparkle updates, "Check for Updates…" in the app menu, beta channel |
 
 Everything builds on macOS, Linux and Android; outside macOS the native parts
 are no-ops and report it (`NativeWindow.translucent` is false).
@@ -46,6 +48,47 @@ Linking the library is enough for QML to find the module: its `qmldir` is in
 the library's resources (`qrc:/qt/qml`), so the QML plugin is never loaded.
 An installed copy works with `find_package(Rask)` as well.
 
+### Dialogs
+
+```qml
+import Rask.Dialogs
+
+AboutDialog { id: about; version: "Version 1.2.0 (abc1234)" }   // empty: from Info.plist
+AboutQtDialog { id: aboutQt }
+
+Alert {
+    id: saveAlert
+    window: root                                   // a sheet; without it, app-modal
+    style: Alert.Warning
+    text: qsTr("Do you want to save the changes?")
+    buttons: [qsTr("Save"), qsTr("Don’t Save"), qsTr("Cancel")]
+    onFinished: button => console.log(buttons[button])
+}
+```
+
+Each has `supported` (false outside macOS): show a QML dialog there.
+
+### Updates
+
+`Rask::Updater` brings Sparkle (downloaded at configure time, checked against
+its SHA-256); `rask_embed_libraries()` puts `Sparkle.framework` in the bundle.
+The app declares its feed in `Info.plist`:
+
+```cmake
+rask_sparkle_plist_keys(MYAPP_SPARKLE_PLIST_KEYS
+    FEED_URL "https://raw.githubusercontent.com/rask-project/myapp/appcast/appcast.xml"
+    PUBLIC_KEY "<EdDSA public key>")
+# Info.plist.in: ${MYAPP_SPARKLE_PLIST_KEYS} inside <dict>
+```
+
+```qml
+import Rask.Updater
+
+Component.onCompleted: Updater.start()      // once the menu bar exists
+```
+
+Without a feed (Debug builds) `Updater.available` is false and nothing runs.
+
 ## Building
 
 Requires Qt 6.10+, CMake 3.21+ and Ninja.
@@ -56,6 +99,7 @@ cmake -B build/Qt_6_12_0_for_macOS_Debug -G Ninja \
 cmake --build build/Qt_6_12_0_for_macOS_Debug
 ctest --test-dir build/Qt_6_12_0_for_macOS_Debug
 open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
+open "build/Qt_6_12_0_for_macOS_Debug/examples/dialogs/Rask Dialogs.app"
 ```
 
 ## License

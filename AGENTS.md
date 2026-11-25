@@ -20,15 +20,30 @@ Guidance for AI agents working in this repository.
   (`RASK_BUILD_EXAMPLES` / `RASK_BUILD_TESTS`, on when built on its own),
   install/export for `find_package(Rask)`.
 - `cmake/RaskModule.cmake` — `rask_add_qml_module()`: one call per module.
-- `cmake/RaskApp.cmake` — helpers for apps: `rask_embed_libraries()`.
+- `cmake/RaskApp.cmake` — helpers for apps: `rask_embed_libraries()` (dylibs
+  and the frameworks they need, e.g. Sparkle) and `rask_sparkle_plist_keys()`.
+- `cmake/RaskSparkle.cmake` — downloads Sparkle (pinned version + SHA-256)
+  into the build tree; used by `Rask.Updater`.
 - `src/Rask/<Module>/` — one directory per module (the path matches the URI):
   - `Rask.Platform` — `Appearance` (QML singleton; QSettings
     `appearance/colorScheme`, applied with `QStyleHints::setColorScheme`).
   - `Rask.Window` — `NativeWindow` (translucency, blur, unified toolbar,
     `leadingInset`, movable, title-bar double click); AppKit in
     `MacWindowEffects.mm`, no-ops in `MacWindowEffects_stub.cpp`.
-- `examples/<name>/` — a small app per module, built as a bundle that embeds
-  the libraries like a real app does.
+  - `Rask.Dialogs` — `AboutDialog` (`orderFrontStandardAboutPanel`),
+    `AboutQtDialog` (`NSAlert` + `qtlogo-64.png` in the module's resources),
+    `Alert` (`NSAlert`; sheet with a window, app-modal without). AppKit in
+    `NativeDialogs.mm`, no-ops in `NativeDialogs_stub.cpp` (`Alert` emits
+    `finished(-1)` there).
+  - `Rask.Updater` — `Updater` (QML singleton backed by a function-local
+    static, `Updater::shared()`): Sparkle's `SPUStandardUpdaterController`,
+    beta channel in QSettings `Updates/betaUpdates`, "Check for Updates…"
+    added natively to the app menu. Sparkle objects are retained with
+    `CFBridgingRetain` and never released (AppKit may call them during quit).
+    Sparkle in `UpdaterNative.mm`, no-ops in `UpdaterNative_stub.cpp`.
+- `examples/<name>/` — small apps (`window`, `dialogs`), built as bundles
+  that embed the libraries like a real app does. Modal panels and sheets are
+  checked by hand there; tests cover properties only.
 - `tests/` — QtTest, run offscreen with `ctest`.
 
 ## Build and run
@@ -65,7 +80,12 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
   plugin: no custom plugin class, no `NO_PLUGIN_OPTIONAL`.
 - **Bundling:** apps call `rask_embed_libraries()` before their own bundle
   signing; it copies and signs the dylibs into `Contents/Frameworks` and
-  sets the rpath. Each example does the same, so the examples are the check.
+  sets the rpath. A module that needs a third-party framework sets the
+  target property `RASK_EMBED_FRAMEWORKS` (see `Rask.Updater`), and the
+  framework is copied with `ditto`, keeping its own signature. Each example
+  does the same, so the examples are the check.
+- **`-Wpadded`** is set per module target (Debug), not project-wide: Qt's
+  generated code in the examples would trip it.
 
 ## Conventions
 
@@ -144,6 +164,9 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
   shown again.
 - AppKit colors expect **0.0–1.0** components: use `QColor::redF()`/
   `greenF()`/`blueF()`.
+- Menu-bar texts that Qt moves into the app menu ("About…", "Settings…",
+  "Quit…") stay in English; other app-menu items are added natively (see
+  "Check for Updates…").
 - Per-window native objects (effect views, toolbars) are kept on the
   `NSWindow` with `objc_setAssociatedObject`, not in C++ members.
 

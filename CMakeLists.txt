@@ -12,10 +12,6 @@ find_package(Qt6 6.10 REQUIRED COMPONENTS Core Gui Qml Quick QmlIntegration)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
-# Flag padded/misaligned class layouts in Debug (see the member ordering rule
-# in AGENTS.md).
-add_compile_options($<$<CONFIG:Debug>:-Wpadded>)
-
 include(GNUInstallDirs)
 include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
@@ -27,12 +23,15 @@ set(QT_QML_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/qml")
 
 add_subdirectory(src/Rask/Platform)
 add_subdirectory(src/Rask/Window)
+add_subdirectory(src/Rask/Dialogs)
+add_subdirectory(src/Rask/Updater)
 
 option(RASK_BUILD_EXAMPLES "Build the rask examples" ${PROJECT_IS_TOP_LEVEL})
 option(RASK_BUILD_TESTS "Build the rask tests" ${PROJECT_IS_TOP_LEVEL})
 
 if(RASK_BUILD_EXAMPLES)
     add_subdirectory(examples/window)
+    add_subdirectory(examples/dialogs)
 endif()
 
 if(RASK_BUILD_TESTS)
