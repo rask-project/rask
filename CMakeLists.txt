@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21.1)
 
-project(Rask VERSION 0.1.0 LANGUAGES CXX OBJCXX)
+project(Rask VERSION 0.2.0 LANGUAGES CXX OBJCXX)
 
 if(NOT APPLE)
     message(FATAL_ERROR "Rask is macOS only")
@@ -27,6 +27,7 @@ add_subdirectory(src/Rask/Window)
 add_subdirectory(src/Rask/Dialogs)
 add_subdirectory(src/Rask/Updater)
 add_subdirectory(src/Rask/Controls)
+add_subdirectory(src/Rask/Application)
 
 option(RASK_BUILD_EXAMPLES "Build the rask examples" ${PROJECT_IS_TOP_LEVEL})
 option(RASK_BUILD_TESTS "Build the rask tests" ${PROJECT_IS_TOP_LEVEL})
@@ -38,6 +39,7 @@ if(RASK_BUILD_EXAMPLES)
     add_subdirectory(examples/window)
     add_subdirectory(examples/dialogs)
     add_subdirectory(examples/settings)
+    add_subdirectory(examples/documents)
 endif()
 
 if(RASK_BUILD_TESTS)

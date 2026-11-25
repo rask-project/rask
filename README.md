@@ -10,10 +10,11 @@ as QML modules named `Rask.*`, built as shared libraries.
 | Module | Types |
 |---|---|
 | `Rask.Platform` | `Appearance` (singleton): the user's light/dark choice, saved and applied app-wide; `SystemColors` (singleton): AppKit's semantic colors (label, text, selection, insertion point, accent, find highlight), following light/dark and the accent |
-| `Rask.Window` | `NativeWindow`: translucent, blurred window with the content under the title bar, window-button inset, title-bar double click. `GlassEffect`: native Liquid Glass (macOS 26+) behind a QML item; `GlassSurface`: the same look drawn in QML, the fallback |
+| `Rask.Window` | `NativeWindow`: translucent, blurred window with the content under the title bar, window-button inset, title-bar double click, represented file and the unsaved-changes dot. `GlassEffect`: native Liquid Glass (macOS 26+) behind a QML item; `GlassSurface`: the same look drawn in QML, the fallback |
 | `Rask.Dialogs` | `AboutDialog` (the system About panel), `AboutQtDialog`, `Alert` (`NSAlert`, as a sheet when given a window) |
 | `Rask.Updater` | `Updater` (singleton): Sparkle updates, "Check for Updates…" in the app menu, beta channel |
-| `Rask.Controls` | System Settings-style controls: `SidebarLayout` (blurred sidebar + opaque content pane), `SidebarItem`, `FormGroup`, `FormRow` (icons come from the app); `SearchBar`, a find and replace bar (the app runs the search) |
+| `Rask.Controls` | System Settings-style controls: `SidebarLayout` (blurred sidebar + opaque content pane), `SidebarItem`, `FormGroup`, `FormRow` (icons come from the app); `SearchBar`, a find and replace bar (the app runs the search); `TabStrip`, tabs in the title bar (wrapping rows, drag to reorder or to another window) |
+| `Rask.Application` | `QuitGuard` (singleton): the app reviews before quitting; `FileOpenHandler` (singleton): files from the Finder and the Dock; `RecentDocuments` (singleton): an Open Recent list, shared with the Dock menu |
 
 macOS only (14.4+, Apple Silicon); features of newer systems report it
 (`GlassEffect.supported` is false before macOS 26).
@@ -153,6 +154,39 @@ Alert {
 }
 ```
 
+### Tabs and documents
+
+```qml
+import Rask.Application
+import Rask.Controls
+
+TabStrip {
+    width: parent.width
+    height: requiredHeight
+    baseSafeTop: root.SafeArea.margins.top
+    leadingInset: native.leadingInset           // NativeWindow
+    nativeWindow: native
+    tabs: documents                             // objects with title, modified, toolTip
+    currentIndex: current
+    onActivateRequested: index => current = index
+    onReorderRequested: (from, to) => moveDocument(from, to)
+    onWindowDropRequested: (index, globalX, globalY) => tearOff(index, globalX, globalY)
+}
+
+Connections {
+    target: FileOpenHandler
+    function onFilesOpened(files) { files.forEach(open) }
+}
+
+Connections {
+    target: QuitGuard                           // ⌘Q, the Dock, logging out
+    function onQuitRequested() { reviewUnsaved(() => QuitGuard.quit()) }
+}
+```
+
+`RecentDocuments.files` feeds an Open Recent menu (`add()` when a file opens).
+The Finder offers the app in "Open With" for the types its `Info.plist`
+declares (`CFBundleDocumentTypes`). See `examples/documents`.
 
 ### Updates
 
@@ -187,6 +221,7 @@ ctest --test-dir build/Qt_6_12_0_for_macOS_Debug
 open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
 open "build/Qt_6_12_0_for_macOS_Debug/examples/dialogs/Rask Dialogs.app"
 open "build/Qt_6_12_0_for_macOS_Debug/examples/settings/Rask Settings.app"
+open "build/Qt_6_12_0_for_macOS_Debug/examples/documents/Rask Documents.app"
 ```
 
 ## Screenshots

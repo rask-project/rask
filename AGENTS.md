@@ -32,7 +32,8 @@ Guidance for AI agents working in this repository.
     `NSApp.effectiveAppearance`, refreshed on `colorSchemeChanged` and
     `NSSystemColorsDidChangeNotification`).
   - `Rask.Window` — `NativeWindow` (translucency, blur, unified toolbar,
-    `leadingInset`, movable, title-bar double click), `GlassEffect` (a
+    `leadingInset`, movable, title-bar double click, `representedFile`,
+    `documentEdited`), `GlassEffect` (a
     `QQuickItem` driving an `NSGlassEffectView`, macOS 26+, inside one
     `NSGlassEffectContainerView` per window between the blur and the Qt
     content view; synced on `afterAnimating`, so nothing per frame when
@@ -52,12 +53,23 @@ Guidance for AI agents working in this repository.
     transparent sidebar over the window blur, opaque content pane, section
     title beside the window buttons), `SidebarItem`, `FormGroup`, `FormRow`
     (from Konsoll's Settings window), `SearchBar` (find and replace; it
-    only reports what the user asks for, the app runs the search). No
+    only reports what the user asks for, the app runs the search),
+    `TabStrip`/`TabStripButton` (title-bar tabs from Konsoll: wrapping rows,
+    drag to reorder, drag out to another window; tabs are any objects with
+    `title`/`modified`/`toolTip`; glass from `Rask.Window`, glyphs drawn in
+    QML). No
     icons or other app assets: apps
     pass their own (`iconName` / `iconSource`). Colors
     follow `Application.styleHints` (typed, so qmllint can check it); the
     selected sidebar row uses the delegate's own `palette.highlight`.
-- `examples/<name>/` — small apps (`window`, `dialogs`, `settings`), built as bundles
+  - `Rask.Application` — app-wide singletons, each an application event
+    filter: `QuitGuard` (the system's quit request arrives as a spontaneous
+    `QEvent::Quit`; ignoring it cancels the termination, and `quit()` goes
+    ahead through `QCoreApplication::quit()`), `FileOpenHandler`
+    (`QFileOpenEvent`s, held until something connects), `RecentDocuments`
+    (QSettings `recentDocuments`, also noted to `NSDocumentController` for
+    the Dock menu; AppKit in `MacRecentDocuments.mm`).
+- `examples/<name>/` — small apps (`window`, `dialogs`, `settings`, `documents`), built as bundles
   that embed the libraries like a real app does. Modal panels and sheets are
   checked by hand there; tests cover properties only.
 - `tests/` — QtTest, run offscreen with `ctest`.
