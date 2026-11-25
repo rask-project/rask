@@ -1,6 +1,10 @@
 find_package(Qt6 REQUIRED COMPONENTS QuickControls2)
 
-qt_add_executable(rask_settings_example main.cpp)
+# The Rask logo as the bundle icon (examples/assets/make-icon.swift).
+set(example_icon "${CMAKE_CURRENT_SOURCE_DIR}/../assets/rask.icns")
+set_source_files_properties(${example_icon} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+
+qt_add_executable(rask_settings_example main.cpp ${example_icon})
 
 qt_add_qml_module(rask_settings_example
     URI RaskSettingsExample
@@ -18,6 +22,8 @@ qt_add_qml_module(rask_settings_example
 set_target_properties(rask_settings_example PROPERTIES
     OUTPUT_NAME "Rask Settings"
     MACOSX_BUNDLE TRUE
+    MACOSX_BUNDLE_BUNDLE_NAME "Rask Settings"
+    MACOSX_BUNDLE_ICON_FILE rask.icns
     MACOSX_BUNDLE_GUI_IDENTIFIER com.github.rask-project.rask.settings-example
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

@@ -106,6 +106,8 @@ ApplicationWindow {
             text: "Appearance"
         }
         ComboBox {
+            // Like an NSPopUpButton: no focus (and focus ring) from a click.
+            focusPolicy: Qt.TabFocus
             model: ["System", "Light", "Dark"]
             currentIndex: Appearance.colorScheme
             onActivated: index => Appearance.colorScheme = index

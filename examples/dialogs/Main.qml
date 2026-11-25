@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Rask.Dialogs
+import Rask.Platform
 import Rask.Updater
 
 ApplicationWindow {
@@ -60,9 +61,27 @@ ApplicationWindow {
     // The menu bar exists once the window is complete; Sparkle adds its item then.
     Component.onCompleted: Updater.start()
 
+    // A fixed width, so the controls stay put when the result text changes.
     ColumnLayout {
         anchors.centerIn: parent
+        width: 360
         spacing: 12
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            Label {
+                Layout.fillWidth: true
+                text: qsTr("Appearance")
+            }
+            ComboBox {
+                // Like an NSPopUpButton: no focus (and focus ring) from a click.
+                focusPolicy: Qt.TabFocus
+                model: [qsTr("System"), qsTr("Light"), qsTr("Dark")]
+                currentIndex: Appearance.colorScheme
+                onActivated: index => Appearance.colorScheme = index
+            }
+        }
 
         Button {
             Layout.fillWidth: true
@@ -93,7 +112,9 @@ ApplicationWindow {
         Label {
             id: resultLabel
 
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
             text: Updater.available ? "" : qsTr("Updates are off: no SUFeedURL/SUPublicEDKey in Info.plist")
         }
     }

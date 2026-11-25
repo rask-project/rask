@@ -78,6 +78,10 @@ Window {
                     showSeparator: false
 
                     ComboBox {
+
+                        // Like an NSPopUpButton: no focus (and focus ring) from a click.
+
+                        focusPolicy: Qt.TabFocus
                         Layout.preferredWidth: 150
                         model: [qsTr("System"), qsTr("Light"), qsTr("Dark")]
                         currentIndex: Appearance.colorScheme

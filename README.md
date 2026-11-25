@@ -5,6 +5,8 @@ apps (Konsoll, Metronom, Tekst): the native macOS behaviour they have in
 common — translucent windows, blur, system appearance, and more to come —
 as QML modules named `Rask.*`, built as shared libraries.
 
+![The Settings example: a blurred sidebar, sections, switches and the opacity slider live, then the switch to the light theme](docs/images/settings.gif)
+
 | Module | Types |
 |---|---|
 | `Rask.Platform` | `Appearance` (singleton): the user's light/dark choice, saved and applied app-wide |
@@ -49,7 +51,13 @@ Linking the library is enough for QML to find the module: its `qmldir` is in
 the library's resources (`qrc:/qt/qml`), so the QML plugin is never loaded.
 An installed copy works with `find_package(Rask)` as well.
 
-### Liquid Glass
+### Window: translucency, blur and Liquid Glass
+
+![The window example: light and dark themes, the glass bar and the blur turned off and on, the opacity dragged down and up](docs/images/window.gif)
+
+| Dark | Light |
+|---|---|
+| ![NativeWindow in the dark theme: Liquid Glass title bar and pill over the blur](docs/images/window-dark.png) | ![NativeWindow in the light theme](docs/images/window-light.png) |
 
 ```qml
 import Rask.Window
@@ -71,6 +79,22 @@ the safe area since Qt 6.9, which pushes it below the toolbar: set
 `topPadding: 0` (or use a plain `Window`, as Konsoll does).
 
 ### Settings windows
+
+| Dark | Light |
+|---|---|
+| ![Settings, Appearance section, dark](docs/images/settings-appearance-dark.png) | ![Settings, Appearance section, light](docs/images/settings-appearance-light.png) |
+| ![Settings, Window section with the blur switch and opacity slider, dark](docs/images/settings-window-dark.png) | ![Settings, Window section, light](docs/images/settings-window-light.png) |
+
+<details>
+<summary>Every section, in both themes</summary>
+
+| Dark | Light |
+|---|---|
+| ![Settings, Keyboard section, dark](docs/images/settings-keyboard-dark.png) | ![Settings, Keyboard section, light](docs/images/settings-keyboard-light.png) |
+| ![Settings, Security section with a selected row and leading icons, dark](docs/images/settings-security-dark.png) | ![Settings, Security section, light](docs/images/settings-security-light.png) |
+| ![Settings, Updates section bound to the Updater, dark](docs/images/settings-updates-dark.png) | ![Settings, Updates section, light](docs/images/settings-updates-light.png) |
+
+</details>
 
 ```qml
 import Rask.Controls
@@ -103,6 +127,15 @@ are the app's own (a theme icon name or an image URL); SVG icons need the app
 to link `Qt6::Svg`. See `examples/settings`.
 
 ### Dialogs
+
+![The dialogs example: the save sheet and its answer, the About panel, About Qt, then the light theme with the sheet and an app-modal alert](docs/images/dialogs.gif)
+
+| | Dark | Light |
+|---|---|---|
+| `Alert` with a window (sheet) | ![Save changes sheet, dark](docs/images/dialogs-sheet-dark.png) | ![Save changes sheet, light](docs/images/dialogs-sheet-light.png) |
+| `AboutDialog` | ![The system About panel, dark](docs/images/dialogs-about-dark.png) | ![The system About panel, light](docs/images/dialogs-about-light.png) |
+| `AboutQtDialog` | ![The About Qt alert, dark](docs/images/dialogs-about-qt-dark.png) | ![The About Qt alert, light](docs/images/dialogs-about-qt-light.png) |
+| `Alert` without a window (app-modal) | ![App-modal alert, dark](docs/images/dialogs-alert-dark.png) | ![App-modal alert, light](docs/images/dialogs-alert-light.png) |
 
 ```qml
 import Rask.Dialogs
@@ -155,6 +188,13 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
 open "build/Qt_6_12_0_for_macOS_Debug/examples/dialogs/Rask Dialogs.app"
 open "build/Qt_6_12_0_for_macOS_Debug/examples/settings/Rask Settings.app"
 ```
+
+## Screenshots
+
+The images above come from the examples, taken by
+`tools/screenshots/take-all.sh` (it drives them with `shoot.sh`: a colour
+backdrop, clicks, captures and ffmpeg). Retake them when an example's look
+changes; the terminal running it needs Screen Recording and Accessibility.
 
 ## License
 

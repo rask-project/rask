@@ -202,6 +202,23 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
   `CMakeLists.txt`): imported targets found in a subdirectory are invisible
   to the examples and tests that link them.
 
+## Screenshots
+
+- The README's images (`docs/images/`) are retaken by
+  `tools/screenshots/take-all.sh [window|dialogs|settings]`: one scene per
+  example, both themes, a GIF each. It drives the examples with
+  `tools/screenshots/shoot.sh` (run it without arguments for its commands): a
+  colour backdrop hides the desktop, `launch` places the example with
+  `-qwindowgeometry`, `click`/`drag`/`key` act, `shot`/`shot-all` capture,
+  `record`/`record-stop` film with ffmpeg, `png`/`gif` optimize.
+- Positions in `take-all.sh` are points relative to each example's window,
+  measured from captures. When an example's layout changes, re-measure and
+  retake; keep example layouts stable (fixed widths) so clicks don't drift.
+- Each scene restores the example's saved appearance afterwards.
+- The terminal running it needs Screen Recording (captures) and
+  Accessibility (clicks and keys), granted to the app that runs the shell;
+  macOS applies them after that app restarts.
+
 ## Formatting
 
 - **Run `tools/format-code.sh` after every change**, before building or
