@@ -13,13 +13,15 @@ import QtQuick.Layouts
 //   SidebarLayout {
 //       anchors.fill: parent
 //       titleBarHeight: window.SafeArea.margins.top
-//       sections: [{ title: qsTr("General"), iconSource: "qrc:/qt/qml/Rask/Controls/icons/window.svg" }]
+//       sections: [{ title: qsTr("General"), iconSource: Qt.resolvedUrl("icons/general.svg") }]
 //       ColumnLayout { FormGroup { FormRow { … } } }
 //   }
 Item {
     id: layout
 
-    // [{ title, iconName or iconSource, badge (optional) }]
+    // [{ title, iconName or iconSource, badge (optional) }]. The icons are the
+    // app's: a theme icon name, or an image URL (Qt.resolvedUrl() it where the
+    // array is written, since it is resolved here otherwise).
     property var sections: []
     property int currentIndex: 0
     property real sidebarWidth: 210

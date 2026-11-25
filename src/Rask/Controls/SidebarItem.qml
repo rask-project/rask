@@ -5,8 +5,7 @@ import QtQuick.Layouts
 
 // Sidebar row of a System Settings-style window: icon badge + title, the
 // accent pill when selected and an optional count badge on the right. The
-// icon is a theme icon (`iconName`) or an image (`iconSource`, e.g. one of
-// the module's badges: "qrc:/qt/qml/Rask/Controls/icons/appearance.svg").
+// icon, from the app, is a theme icon (`iconName`) or an image (`iconSource`).
 ItemDelegate {
     id: sidebarItem
 
@@ -27,7 +26,7 @@ ItemDelegate {
     rightPadding: 8
     spacing: 8
 
-    // The theme SVGs carry their own badge colors, so the icon is not tinted.
+    // Icons carry their own colors (badges), so they are not tinted.
     contentItem: RowLayout {
         spacing: sidebarItem.spacing
 

@@ -6,6 +6,13 @@ qt_add_qml_module(rask_settings_example
     URI RaskSettingsExample
     QML_FILES
         Main.qml
+    # The app brings its own icons (SVG, so it links Qt6::Svg for the image format).
+    RESOURCES
+        icons/appearance.svg
+        icons/keyboard.svg
+        icons/security.svg
+        icons/updates.svg
+        icons/window.svg
 )
 
 set_target_properties(rask_settings_example PROPERTIES
@@ -21,6 +28,7 @@ target_link_libraries(rask_settings_example
     PRIVATE
         Qt6::Quick
         Qt6::QuickControls2
+        Qt6::Svg
         Rask::Controls
         Rask::Platform
         Rask::Updater

@@ -14,7 +14,7 @@ import Rask.Window
 Window {
     id: root
 
-    readonly property string badges: "qrc:/qt/qml/Rask/Controls/icons/"
+    readonly property string badges: Qt.resolvedUrl("icons/")
     readonly property color secondaryTextColor: Appearance.dark ? Qt.rgba(1, 1, 1, 0.55) : Qt.rgba(0, 0, 0, 0.5)
 
     width: 720

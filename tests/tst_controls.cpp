@@ -29,10 +29,9 @@ void TestControls::createsEveryType_data()
     ) << QByteArray{"import QtQuick\nimport QtQuick.Controls\nimport Rask.Controls\n"
                     "FormGroup { FormRow { label: \"A\"; showSeparator: false; Switch {} }"
                     " FormRow { label: \"B\"; detail: \"d\"; selectable: true; highlighted: true } }"};
-    QTest::newRow("SidebarItem with a badge icon")
+    QTest::newRow("SidebarItem with a theme icon")
         << QByteArray{"import Rask.Controls\n"
-                      "SidebarItem { title: \"General\"; selected: true; badge: \"3\";"
-                      " iconSource: \"qrc:/qt/qml/Rask/Controls/icons/window.svg\" }"};
+                      "SidebarItem { title: \"General\"; selected: true; badge: \"3\"; iconName: \"general\" }"};
 }
 
 void TestControls::createsEveryType()

@@ -11,7 +11,7 @@ as QML modules named `Rask.*`, built as shared libraries.
 | `Rask.Window` | `NativeWindow`: translucent, blurred window with the content under the title bar, window-button inset, title-bar double click. `GlassEffect`: native Liquid Glass (macOS 26+) behind a QML item; `GlassSurface`: the same look drawn in QML, the fallback |
 | `Rask.Dialogs` | `AboutDialog` (the system About panel), `AboutQtDialog`, `Alert` (`NSAlert`, as a sheet when given a window) |
 | `Rask.Updater` | `Updater` (singleton): Sparkle updates, "Check for Updates…" in the app menu, beta channel |
-| `Rask.Controls` | System Settings-style controls: `SidebarLayout` (blurred sidebar + opaque content pane), `SidebarItem`, `FormGroup`, `FormRow`, and badge icons (`qrc:/qt/qml/Rask/Controls/icons/*.svg`) |
+| `Rask.Controls` | System Settings-style controls: `SidebarLayout` (blurred sidebar + opaque content pane), `SidebarItem`, `FormGroup`, `FormRow` (icons come from the app) |
 
 Everything builds on macOS, Linux and Android; outside macOS the native parts
 are no-ops and report it (`NativeWindow.translucent` is false).
@@ -85,7 +85,7 @@ Window {
     SidebarLayout {
         anchors.fill: parent
         titleBarHeight: Math.max(window.SafeArea.margins.top, 28)
-        sections: [{ title: qsTr("General"), iconSource: "qrc:/qt/qml/Rask/Controls/icons/window.svg" }]
+        sections: [{ title: qsTr("General"), iconSource: Qt.resolvedUrl("icons/general.svg") }]
 
         ColumnLayout {                       // one page per section
             FormGroup {
@@ -98,8 +98,9 @@ Window {
 ```
 
 The sidebar is transparent, so the window's blur shows through it; the
-selected section gets the accent pill; the content pane is opaque. See
-`examples/settings`.
+selected section gets the accent pill; the content pane is opaque. The icons
+are the app's own (a theme icon name or an image URL); SVG icons need the app
+to link `Qt6::Svg`. See `examples/settings`.
 
 ### Dialogs
 

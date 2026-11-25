@@ -49,7 +49,8 @@ Guidance for AI agents working in this repository.
   - `Rask.Controls` — QML only: `SidebarLayout` (System Settings layout:
     transparent sidebar over the window blur, opaque content pane, section
     title beside the window buttons), `SidebarItem`, `FormGroup`, `FormRow`
-    (from Konsoll's Settings window), and the badge icons in `icons/`. Colors
+    (from Konsoll's Settings window). No icons or other app assets: apps
+    pass their own (`iconName` / `iconSource`). Colors
     follow `Application.styleHints` (typed, so qmllint can check it); the
     selected sidebar row uses the delegate's own `palette.highlight`.
 - `examples/<name>/` — small apps (`window`, `dialogs`, `settings`), built as bundles
@@ -198,9 +199,10 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
 - Run qmllint on changed QML (`qmllint -I build/…/qml <files>`) and keep it
   clean. Delegates that reach ids outside them need
   `pragma ComponentBehavior: Bound`.
-- A Qt module a module's public QML uses (e.g. `Svg` for the badges) is
-  found in the top-level `find_package(Qt6 …)`: imported targets found in a
-  subdirectory are invisible to the examples and tests that link the module.
+- Modules ship no app assets (icons, images, sounds): apps pass their own.
+- Qt modules are found at the top level (`find_package(Qt6 …)` in
+  `CMakeLists.txt`): imported targets found in a subdirectory are invisible
+  to the examples and tests that link them.
 
 ## Formatting
 

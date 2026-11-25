@@ -8,7 +8,7 @@ endif()
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.10 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Svg QmlIntegration)
+find_package(Qt6 6.10 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 QmlIntegration)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
@@ -31,6 +31,9 @@ option(RASK_BUILD_EXAMPLES "Build the rask examples" ${PROJECT_IS_TOP_LEVEL})
 option(RASK_BUILD_TESTS "Build the rask tests" ${PROJECT_IS_TOP_LEVEL})
 
 if(RASK_BUILD_EXAMPLES)
+    # The settings example's own SVG icons. Found here, not in its directory,
+    # so its imported target is visible where the example is finalized.
+    find_package(Qt6 REQUIRED COMPONENTS Svg)
     add_subdirectory(examples/window)
     add_subdirectory(examples/dialogs)
     add_subdirectory(examples/settings)
