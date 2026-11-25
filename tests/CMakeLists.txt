@@ -12,3 +12,4 @@ rask_add_test(tst_nativewindow Rask::Window)
 
 rask_add_test(tst_dialogs Rask::Dialogs)
 rask_add_test(tst_updater Rask::Updater)
+rask_add_test(tst_glasseffect Rask::Window)

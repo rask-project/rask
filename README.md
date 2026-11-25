@@ -8,7 +8,7 @@ as QML modules named `Rask.*`, built as shared libraries.
 | Module | Types |
 |---|---|
 | `Rask.Platform` | `Appearance` (singleton): the user's light/dark choice, saved and applied app-wide |
-| `Rask.Window` | `NativeWindow`: translucent, blurred window with the content under the title bar, window-button inset, title-bar double click |
+| `Rask.Window` | `NativeWindow`: translucent, blurred window with the content under the title bar, window-button inset, title-bar double click. `GlassEffect`: native Liquid Glass (macOS 26+) behind a QML item; `GlassSurface`: the same look drawn in QML, the fallback |
 | `Rask.Dialogs` | `AboutDialog` (the system About panel), `AboutQtDialog`, `Alert` (`NSAlert`, as a sheet when given a window) |
 | `Rask.Updater` | `Updater` (singleton): Sparkle updates, "Check for Updates…" in the app menu, beta channel |
 
@@ -47,6 +47,21 @@ ApplicationWindow {
 Linking the library is enough for QML to find the module: its `qmldir` is in
 the library's resources (`qrc:/qt/qml`), so the QML plugin is never loaded.
 An installed copy works with `find_package(Rask)` as well.
+
+### Liquid Glass
+
+```qml
+import Rask.Window
+
+Item {                       // e.g. a tab strip
+    GlassEffect { id: glass; anchors.fill: parent; visible: supported; cornerRadius: 0 }
+    GlassSurface { anchors.fill: parent; visible: !glass.supported; radius: 0 }
+}
+```
+
+The native glass view sits behind the Qt content (above the window blur) and
+follows the item's geometry, visibility and opacity every frame; QML drawn
+over the item shows on top of it. It needs a `NativeWindow`.
 
 ### Dialogs
 

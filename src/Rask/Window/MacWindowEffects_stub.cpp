@@ -21,4 +21,27 @@ void setMovable(WId /*winId*/, bool /*movable*/) {}
 
 void performTitleBarDoubleClick(WId /*winId*/) {}
 
+bool glassSupported() noexcept
+{
+    return false;
+}
+
+bool createGlassView(WId /*winId*/, const QString & /*identifier*/)
+{
+    return false;
+}
+
+void updateGlassView(
+    WId /*winId*/,
+    const QString & /*identifier*/,
+    const QRectF & /*sceneRect*/,
+    qreal /*cornerRadius*/,
+    const QColor & /*tint*/,
+    qreal /*alpha*/,
+    bool /*clearStyle*/
+)
+{}
+
+void destroyGlassView(WId /*winId*/, const QString & /*identifier*/) {}
+
 } // namespace rask::macwindow

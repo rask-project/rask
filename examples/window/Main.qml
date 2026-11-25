@@ -32,6 +32,22 @@ ApplicationWindow {
         anchors.right: parent.right
         height: 52
 
+        // Native Liquid Glass behind the bar (macOS 26+), else the same look drawn in QML.
+        GlassEffect {
+            id: barGlass
+
+            anchors.fill: parent
+            visible: supported && glassSwitch.checked
+            cornerRadius: 0
+        }
+        GlassSurface {
+            anchors.fill: parent
+            visible: !barGlass.supported && glassSwitch.checked
+            radius: 0
+            density: 0.6
+            borderWidth: 0
+        }
+
         TapHandler {
             onDoubleTapped: nativeWindow.titleBarDoubleClicked()
         }
@@ -42,6 +58,34 @@ ApplicationWindow {
             anchors.verticalCenter: parent.verticalCenter
             text: root.title
             font.bold: true
+        }
+
+        // A tinted glass pill, like the active tab.
+        Item {
+            anchors.right: parent.right
+            anchors.rightMargin: 12
+            anchors.verticalCenter: parent.verticalCenter
+            width: 120
+            height: 30
+
+            GlassEffect {
+                id: pillGlass
+
+                anchors.fill: parent
+                visible: supported
+                cornerRadius: height / 2
+                tint: Qt.rgba(0.2, 0.5, 1.0, 0.35)
+            }
+            GlassSurface {
+                anchors.fill: parent
+                visible: !pillGlass.supported
+                tint: "#3380ff"
+                tintStrength: 0.35
+            }
+            Label {
+                anchors.centerIn: parent
+                text: pillGlass.supported ? "Liquid Glass" : "QML glass"
+            }
         }
     }
 
@@ -67,6 +111,15 @@ ApplicationWindow {
         }
         Switch {
             id: blurSwitch
+
+            checked: true
+        }
+
+        Label {
+            text: "Glass bar"
+        }
+        Switch {
+            id: glassSwitch
 
             checked: true
         }

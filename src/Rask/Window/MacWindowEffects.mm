@@ -1,4 +1,5 @@
 #import <AppKit/AppKit.h>
+#import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 
 #include "MacWindowEffects_p.h"
@@ -14,6 +15,7 @@ namespace
 const char effectViewKey{};
 const char toolbarKey{};
 const char inputForwardingViewKey{};
+const char glassHostKey{};
 
 constexpr std::array windowButtonTypes{NSWindowCloseButton, NSWindowMiniaturizeButton, NSWindowZoomButton};
 
@@ -34,6 +36,20 @@ NSWindow *windowFromId(WId winId)
 @interface RaskInputForwardingView : NSView
 @property(nonatomic, weak) NSWindow *targetWindow;
 @property(nonatomic, weak) NSView *targetView;
+@end
+
+// Hosts the glass views with a top-left origin like the Qt content view, so a
+// glass frame stays pinned to the top while the window resizes (with the
+// default bottom-left origin a vertical resize shifts it, and its QML scene
+// rect, so the next sync, does not change).
+@interface RaskFlippedView : NSView
+@end
+
+@implementation RaskFlippedView
+- (BOOL)isFlipped
+{
+    return YES;
+}
 @end
 
 @implementation RaskInputForwardingView
@@ -87,7 +103,10 @@ void setBlur(NSWindow *window, NSView *frameView, NSView *contentView, bool enab
         [effectView setMaterial:NSVisualEffectMaterialUnderWindowBackground];
         [effectView setState:NSVisualEffectStateActive];
         objc_setAssociatedObject(window, &effectViewKey, effectView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        [frameView addSubview:effectView positioned:NSWindowBelow relativeTo:contentView];
+        // Below the glass host (if any), so the glass samples the blur.
+        NSView *const glassHost{objc_getAssociatedObject(window, &glassHostKey)};
+        NSView *const anchor{[glassHost superview] == frameView ? glassHost : contentView};
+        [frameView addSubview:effectView positioned:NSWindowBelow relativeTo:anchor];
     }
     [effectView setAlphaValue:alpha];
 }
@@ -137,6 +156,45 @@ void setUnifiedToolbar(NSWindow *window, NSView *frameView, NSView *contentView,
         return;
     }
     raiseContentAboveToolbar(window, frameView, contentView);
+}
+NSView *glassHostContent(NSWindow *window, bool create) API_AVAILABLE(macos(26.0))
+{
+    if (window == nil) {
+        return nil;
+    }
+    NSGlassEffectContainerView *host{objc_getAssociatedObject(window, &glassHostKey)};
+    if (host != nil || !create) {
+        return [host contentView];
+    }
+    NSView *const contentView{[window contentView]};
+    NSView *const frameView{[contentView superview]};
+    if (frameView == nil) {
+        return nil;
+    }
+    // Like the blur, the host lives in the frame view so it covers the
+    // expanded title-bar area; directly below the Qt content view, above the blur.
+    const NSRect bounds{[frameView bounds]};
+    host = [[NSGlassEffectContainerView alloc] initWithFrame:bounds];
+    [host setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    NSView *const hostContent{[[RaskFlippedView alloc] initWithFrame:bounds]};
+    [hostContent setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [host setContentView:hostContent];
+    objc_setAssociatedObject(window, &glassHostKey, host, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [frameView addSubview:host positioned:NSWindowBelow relativeTo:contentView];
+    return hostContent;
+}
+
+NSGlassEffectView *findGlassView(NSView *hostContent, const QString &identifier) API_AVAILABLE(macos(26.0))
+{
+    if (hostContent == nil) {
+        return nil;
+    }
+    NSString *const nsIdentifier{identifier.toNSString()};
+    NSArray<NSView *> *const subviews{[hostContent subviews]};
+    const NSUInteger index{[subviews indexOfObjectPassingTest:^BOOL(NSView *view, NSUInteger, BOOL *) {
+      return [[view identifier] isEqualToString:nsIdentifier];
+    }]};
+    return index == NSNotFound ? nil : static_cast<NSGlassEffectView *>(subviews[index]);
 }
 } // namespace
 
@@ -224,6 +282,79 @@ void performTitleBarDoubleClick(WId winId)
         [window performMiniaturize:nil];
     } else if (![action isEqualToString:@"None"]) {
         [window performZoom:nil];
+    }
+}
+
+bool glassSupported() noexcept
+{
+    if (@available(macOS 26.0, *)) {
+        return true;
+    }
+    return false;
+}
+
+bool createGlassView(WId winId, const QString &identifier)
+{
+    if (@available(macOS 26.0, *)) {
+        NSView *const hostContent{glassHostContent(windowFromId(winId), true)};
+        if (hostContent == nil) {
+            return false;
+        }
+        if (findGlassView(hostContent, identifier) != nil) {
+            return true;
+        }
+        NSGlassEffectView *const glass{[[NSGlassEffectView alloc] initWithFrame:NSZeroRect]};
+        [glass setIdentifier:identifier.toNSString()];
+        [glass setHidden:YES];
+        [hostContent addSubview:glass];
+        return true;
+    }
+    return false;
+}
+
+void updateGlassView(
+    WId winId,
+    const QString &identifier,
+    const QRectF &sceneRect,
+    qreal cornerRadius,
+    const QColor &tint,
+    qreal alpha,
+    bool clearStyle
+)
+{
+    if (@available(macOS 26.0, *)) {
+        NSWindow *const window{windowFromId(winId)};
+        NSView *const hostContent{glassHostContent(window, false)};
+        NSGlassEffectView *const glass{findGlassView(hostContent, identifier)};
+        if (glass == nil) {
+            return;
+        }
+        // QML scene coordinates are the content view's; convertRect handles
+        // the flipped/unflipped difference.
+        const NSRect frame{[[window contentView] convertRect:sceneRect.toCGRect() toView:hostContent]};
+        NSColor *const tintColor{
+            tint.alpha() > 0 ? [NSColor colorWithSRGBRed:tint.redF()
+                                                   green:tint.greenF()
+                                                    blue:tint.blueF()
+                                                   alpha:tint.alphaF()]
+                             : nil
+        };
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        [glass setFrame:frame];
+        [glass setCornerRadius:cornerRadius];
+        [glass setStyle:clearStyle ? NSGlassEffectViewStyleClear : NSGlassEffectViewStyleRegular];
+        [glass setTintColor:tintColor];
+        [glass setAlphaValue:alpha];
+        [glass setHidden:alpha <= 0.0];
+        [CATransaction commit];
+    }
+}
+
+void destroyGlassView(WId winId, const QString &identifier)
+{
+    if (@available(macOS 26.0, *)) {
+        [findGlassView(glassHostContent(windowFromId(winId), false), identifier) removeFromSuperview];
     }
 }
 

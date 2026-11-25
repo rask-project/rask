@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QColor>
+#include <QRectF>
+#include <QString>
 #include <QWindow>
 
 // The native side of NativeWindow: AppKit in MacWindowEffects.mm, no-ops in
@@ -19,5 +21,22 @@ void apply(WId winId, const QColor &color, qreal alpha, bool blur, bool unifiedT
 void setResizable(WId winId, bool resizable);
 void setMovable(WId winId, bool movable);
 void performTitleBarDoubleClick(WId winId);
+
+// Liquid Glass (macOS 26+): NSGlassEffectViews behind the Qt content view,
+// above the window blur, so QML draws on top of real glass. Each view is
+// addressed by a caller-chosen identifier.
+[[nodiscard]] bool glassSupported() noexcept;
+[[nodiscard]] bool createGlassView(WId winId, const QString &identifier);
+// `sceneRect` is in QML scene (content view) coordinates.
+void updateGlassView(
+    WId winId,
+    const QString &identifier,
+    const QRectF &sceneRect,
+    qreal cornerRadius,
+    const QColor &tint,
+    qreal alpha,
+    bool clearStyle
+);
+void destroyGlassView(WId winId, const QString &identifier);
 
 } // namespace rask::macwindow

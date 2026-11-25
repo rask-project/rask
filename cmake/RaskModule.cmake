@@ -82,8 +82,13 @@ function(rask_add_qml_module name)
             ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
-    # Flag padded class layouts in Debug (the member ordering rule in AGENTS.md).
-    target_compile_options(${target} PRIVATE $<$<CONFIG:Debug>:-Wpadded>)
+    # Flag padded class layouts in Debug (the member ordering rule in AGENTS.md),
+    # on our sources only: Qt's generated code (qmlcachegen) trips it.
+    foreach(source IN LISTS sources)
+        if(source MATCHES "\\.(cpp|mm)$")
+            set_property(SOURCE ${source} APPEND PROPERTY COMPILE_OPTIONS $<$<CONFIG:Debug>:-Wpadded>)
+        endif()
+    endforeach()
 
     target_link_libraries(${target}
         PUBLIC Qt6::Core Qt6::QmlIntegration ${arg_PUBLIC_LIBRARIES}

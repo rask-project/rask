@@ -28,8 +28,13 @@ Guidance for AI agents working in this repository.
   - `Rask.Platform` — `Appearance` (QML singleton; QSettings
     `appearance/colorScheme`, applied with `QStyleHints::setColorScheme`).
   - `Rask.Window` — `NativeWindow` (translucency, blur, unified toolbar,
-    `leadingInset`, movable, title-bar double click); AppKit in
-    `MacWindowEffects.mm`, no-ops in `MacWindowEffects_stub.cpp`.
+    `leadingInset`, movable, title-bar double click), `GlassEffect` (a
+    `QQuickItem` driving an `NSGlassEffectView`, macOS 26+, inside one
+    `NSGlassEffectContainerView` per window between the blur and the Qt
+    content view; synced on `afterAnimating`, so nothing per frame when
+    unchanged) and `GlassSurface.qml` (the QML-drawn fallback: static, nothing
+    animated). AppKit in `MacWindowEffects.mm`, no-ops in
+    `MacWindowEffects_stub.cpp`.
   - `Rask.Dialogs` — `AboutDialog` (`orderFrontStandardAboutPanel`),
     `AboutQtDialog` (`NSAlert` + `qtlogo-64.png` in the module's resources),
     `Alert` (`NSAlert`; sheet with a window, app-modal without). AppKit in
@@ -84,8 +89,10 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
   target property `RASK_EMBED_FRAMEWORKS` (see `Rask.Updater`), and the
   framework is copied with `ditto`, keeping its own signature. Each example
   does the same, so the examples are the check.
-- **`-Wpadded`** is set per module target (Debug), not project-wide: Qt's
-  generated code in the examples would trip it.
+- **`-Wpadded`** is set on each module's own `.cpp`/`.mm` sources (Debug), not
+  on targets or project-wide: Qt's generated code (qmlcachegen output for a
+  module's QML files, the examples) would trip it. Headers are still checked
+  through the sources that include them.
 
 ## Conventions
 
@@ -171,6 +178,12 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
 - Menu-bar texts that Qt moves into the app menu ("About…", "Settings…",
   "Quit…") stay in English; other app-menu items are added natively (see
   "Check for Updates…").
+- Stacking in the window's frame view, bottom to top: blur
+  (`NSVisualEffectView`), glass host (`NSGlassEffectContainerView`), Qt content
+  view, window buttons, input-forwarding view. Whatever creates one of them
+  later must insert it at its place (see `setBlur`).
+- New macOS APIs go behind `@available` / `API_AVAILABLE` and report it
+  (`GlassEffect.supported`): the deployment target is macOS 14.4.
 - Per-window native objects (effect views, toolbars) are kept on the
   `NSWindow` with `objc_setAssociatedObject`, not in C++ members.
 
