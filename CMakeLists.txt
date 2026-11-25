@@ -8,7 +8,7 @@ endif()
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.10 REQUIRED COMPONENTS Core Gui Qml Quick QmlIntegration)
+find_package(Qt6 6.10 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Svg QmlIntegration)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
@@ -25,6 +25,7 @@ add_subdirectory(src/Rask/Platform)
 add_subdirectory(src/Rask/Window)
 add_subdirectory(src/Rask/Dialogs)
 add_subdirectory(src/Rask/Updater)
+add_subdirectory(src/Rask/Controls)
 
 option(RASK_BUILD_EXAMPLES "Build the rask examples" ${PROJECT_IS_TOP_LEVEL})
 option(RASK_BUILD_TESTS "Build the rask tests" ${PROJECT_IS_TOP_LEVEL})
@@ -32,6 +33,7 @@ option(RASK_BUILD_TESTS "Build the rask tests" ${PROJECT_IS_TOP_LEVEL})
 if(RASK_BUILD_EXAMPLES)
     add_subdirectory(examples/window)
     add_subdirectory(examples/dialogs)
+    add_subdirectory(examples/settings)
 endif()
 
 if(RASK_BUILD_TESTS)

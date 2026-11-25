@@ -46,7 +46,13 @@ Guidance for AI agents working in this repository.
     added natively to the app menu. Sparkle objects are retained with
     `CFBridgingRetain` and never released (AppKit may call them during quit).
     Sparkle in `UpdaterNative.mm`, no-ops in `UpdaterNative_stub.cpp`.
-- `examples/<name>/` — small apps (`window`, `dialogs`), built as bundles
+  - `Rask.Controls` — QML only: `SidebarLayout` (System Settings layout:
+    transparent sidebar over the window blur, opaque content pane, section
+    title beside the window buttons), `SidebarItem`, `FormGroup`, `FormRow`
+    (from Konsoll's Settings window), and the badge icons in `icons/`. Colors
+    follow `Application.styleHints` (typed, so qmllint can check it); the
+    selected sidebar row uses the delegate's own `palette.highlight`.
+- `examples/<name>/` — small apps (`window`, `dialogs`, `settings`), built as bundles
   that embed the libraries like a real app does. Modal panels and sheets are
   checked by hand there; tests cover properties only.
 - `tests/` — QtTest, run offscreen with `ctest`.
@@ -186,6 +192,15 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
   (`GlassEffect.supported`): the deployment target is macOS 14.4.
 - Per-window native objects (effect views, toolbars) are kept on the
   `NSWindow` with `objc_setAssociatedObject`, not in C++ members.
+
+## QML
+
+- Run qmllint on changed QML (`qmllint -I build/…/qml <files>`) and keep it
+  clean. Delegates that reach ids outside them need
+  `pragma ComponentBehavior: Bound`.
+- A Qt module a module's public QML uses (e.g. `Svg` for the badges) is
+  found in the top-level `find_package(Qt6 …)`: imported targets found in a
+  subdirectory are invisible to the examples and tests that link the module.
 
 ## Formatting
 

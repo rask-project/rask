@@ -11,6 +11,7 @@ as QML modules named `Rask.*`, built as shared libraries.
 | `Rask.Window` | `NativeWindow`: translucent, blurred window with the content under the title bar, window-button inset, title-bar double click. `GlassEffect`: native Liquid Glass (macOS 26+) behind a QML item; `GlassSurface`: the same look drawn in QML, the fallback |
 | `Rask.Dialogs` | `AboutDialog` (the system About panel), `AboutQtDialog`, `Alert` (`NSAlert`, as a sheet when given a window) |
 | `Rask.Updater` | `Updater` (singleton): Sparkle updates, "Check for Updates…" in the app menu, beta channel |
+| `Rask.Controls` | System Settings-style controls: `SidebarLayout` (blurred sidebar + opaque content pane), `SidebarItem`, `FormGroup`, `FormRow`, and badge icons (`qrc:/qt/qml/Rask/Controls/icons/*.svg`) |
 
 Everything builds on macOS, Linux and Android; outside macOS the native parts
 are no-ops and report it (`NativeWindow.translucent` is false).
@@ -69,6 +70,37 @@ after `NativeWindow.leadingInset`. An `ApplicationWindow` pads its content by
 the safe area since Qt 6.9, which pushes it below the toolbar: set
 `topPadding: 0` (or use a plain `Window`, as Konsoll does).
 
+### Settings windows
+
+```qml
+import Rask.Controls
+import Rask.Window
+
+Window {
+    id: window
+    flags: Qt.Window | Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
+    color: "transparent"
+    NativeWindow { window: window; color: "#1e1e1e"; alpha: 0.9 }
+
+    SidebarLayout {
+        anchors.fill: parent
+        titleBarHeight: Math.max(window.SafeArea.margins.top, 28)
+        sections: [{ title: qsTr("General"), iconSource: "qrc:/qt/qml/Rask/Controls/icons/window.svg" }]
+
+        ColumnLayout {                       // one page per section
+            FormGroup {
+                FormRow { label: qsTr("Blur"); showSeparator: false; Switch {} }
+                FormRow { label: qsTr("Font"); detail: "Menlo 13 pt"; Button { text: qsTr("Change…") } }
+            }
+        }
+    }
+}
+```
+
+The sidebar is transparent, so the window's blur shows through it; the
+selected section gets the accent pill; the content pane is opaque. See
+`examples/settings`.
+
 ### Dialogs
 
 ```qml
@@ -121,6 +153,7 @@ cmake --build build/Qt_6_12_0_for_macOS_Debug
 ctest --test-dir build/Qt_6_12_0_for_macOS_Debug
 open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
 open "build/Qt_6_12_0_for_macOS_Debug/examples/dialogs/Rask Dialogs.app"
+open "build/Qt_6_12_0_for_macOS_Debug/examples/settings/Rask Settings.app"
 ```
 
 ## License
