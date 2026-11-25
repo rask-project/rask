@@ -11,4 +11,5 @@ private slots:
     void createsEveryType_data();
     void createsEveryType();
     void sidebarLayoutFollowsSelection();
+    void tabStripWrapsAndPlacesDrops();
 };

@@ -35,6 +35,10 @@ void TestControls::createsEveryType_data()
     QTest::newRow("SearchBar replacing"
     ) << QByteArray{"import Rask.Controls\n"
                     "SearchBar { width: 600; text: \"x\"; replacing: true; matchCount: 3; currentMatch: 1 }"};
+    QTest::newRow("TabStrip with tabs"
+    ) << QByteArray{"import Rask.Controls\n"
+                    "TabStrip { width: 900; leadingInset: 80; currentIndex: 1;"
+                    " tabs: [{ title: \"a.txt\" }, { title: \"b.cpp\", modified: true }] }"};
 }
 
 void TestControls::createsEveryType()
@@ -58,6 +62,29 @@ void TestControls::sidebarLayoutFollowsSelection()
     QCOMPARE(layout->property("currentTitle").toString(), QStringLiteral("One"));
     layout->setProperty("currentIndex", 1);
     QCOMPARE(layout->property("currentTitle").toString(), QStringLiteral("Two"));
+}
+
+void TestControls::tabStripWrapsAndPlacesDrops()
+{
+    QQmlEngine engine;
+    const std::unique_ptr<QObject> strip{create(
+        engine,
+        "import Rask.Controls\n"
+        "TabStrip { width: 400; leadingInset: 80; currentIndex: 0;"
+        " tabs: [{ title: \"1\" }, { title: \"2\" }, { title: \"3\" }, { title: \"4\" }, { title: \"5\" }] }"
+    )};
+    QVERIFY(strip != nullptr);
+    QVERIFY(strip->property("rowCount").toInt() > 1);
+    QVERIFY(strip->property("requiredHeight").toReal() > 40.0);
+    QVariant index;
+    QVERIFY(QMetaObject::invokeMethod(
+        strip.get(),
+        "insertionIndexAtGlobal",
+        Q_RETURN_ARG(QVariant, index),
+        Q_ARG(QVariant, 0.0),
+        Q_ARG(QVariant, 0.0)
+    ));
+    QCOMPARE(index.toInt(), 0);
 }
 
 QTEST_MAIN(TestControls)
