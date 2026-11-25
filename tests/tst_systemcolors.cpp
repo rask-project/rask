@@ -13,6 +13,7 @@ void TestSystemColors::resolvesTheSemanticColors()
     QVERIFY(colors.selectedTextBackground().isValid());
     QVERIFY(colors.textInsertionPoint().isValid());
     QVERIFY(colors.controlAccent().isValid());
+    QVERIFY(colors.findHighlight().isValid());
 }
 
 QTEST_MAIN(TestSystemColors)

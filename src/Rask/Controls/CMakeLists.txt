@@ -4,6 +4,7 @@ rask_add_qml_module(Controls
     QML_FILES
         FormGroup.qml
         FormRow.qml
+        SearchBar.qml
         SidebarItem.qml
         SidebarLayout.qml
     PUBLIC_LIBRARIES

@@ -9,11 +9,11 @@ as QML modules named `Rask.*`, built as shared libraries.
 
 | Module | Types |
 |---|---|
-| `Rask.Platform` | `Appearance` (singleton): the user's light/dark choice, saved and applied app-wide; `SystemColors` (singleton): AppKit's semantic colors (label, text, selection, insertion point, accent), following light/dark and the accent |
+| `Rask.Platform` | `Appearance` (singleton): the user's light/dark choice, saved and applied app-wide; `SystemColors` (singleton): AppKit's semantic colors (label, text, selection, insertion point, accent, find highlight), following light/dark and the accent |
 | `Rask.Window` | `NativeWindow`: translucent, blurred window with the content under the title bar, window-button inset, title-bar double click. `GlassEffect`: native Liquid Glass (macOS 26+) behind a QML item; `GlassSurface`: the same look drawn in QML, the fallback |
 | `Rask.Dialogs` | `AboutDialog` (the system About panel), `AboutQtDialog`, `Alert` (`NSAlert`, as a sheet when given a window) |
 | `Rask.Updater` | `Updater` (singleton): Sparkle updates, "Check for Updates…" in the app menu, beta channel |
-| `Rask.Controls` | System Settings-style controls: `SidebarLayout` (blurred sidebar + opaque content pane), `SidebarItem`, `FormGroup`, `FormRow` (icons come from the app) |
+| `Rask.Controls` | System Settings-style controls: `SidebarLayout` (blurred sidebar + opaque content pane), `SidebarItem`, `FormGroup`, `FormRow` (icons come from the app); `SearchBar`, a find and replace bar (the app runs the search) |
 
 macOS only (14.4+, Apple Silicon); features of newer systems report it
 (`GlassEffect.supported` is false before macOS 26).

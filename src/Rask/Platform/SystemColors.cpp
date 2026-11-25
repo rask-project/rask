@@ -64,4 +64,9 @@ QColor SystemColors::controlAccent() const
     return m_colors.controlAccent;
 }
 
+QColor SystemColors::findHighlight() const
+{
+    return m_colors.findHighlight;
+}
+
 } // namespace rask

@@ -32,6 +32,9 @@ void TestControls::createsEveryType_data()
     QTest::newRow("SidebarItem with a theme icon")
         << QByteArray{"import Rask.Controls\n"
                       "SidebarItem { title: \"General\"; selected: true; badge: \"3\"; iconName: \"general\" }"};
+    QTest::newRow("SearchBar replacing"
+    ) << QByteArray{"import Rask.Controls\n"
+                    "SearchBar { width: 600; text: \"x\"; replacing: true; matchCount: 3; currentMatch: 1 }"};
 }
 
 void TestControls::createsEveryType()

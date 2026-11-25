@@ -31,6 +31,7 @@ class RASK_PLATFORM_EXPORT SystemColors : public QObject
     Q_PROPERTY(QColor unemphasizedSelectedTextBackground READ unemphasizedSelectedTextBackground NOTIFY changed)
     Q_PROPERTY(QColor textInsertionPoint READ textInsertionPoint NOTIFY changed)
     Q_PROPERTY(QColor controlAccent READ controlAccent NOTIFY changed)
+    Q_PROPERTY(QColor findHighlight READ findHighlight NOTIFY changed)
 public:
     // The resolved colors, in sRGB.
     struct Colors {
@@ -42,6 +43,7 @@ public:
         QColor unemphasizedSelectedTextBackground;
         QColor textInsertionPoint;
         QColor controlAccent;
+        QColor findHighlight;
     };
 
     explicit SystemColors(QObject *parent = nullptr);
@@ -59,6 +61,7 @@ public:
     [[nodiscard]] QColor unemphasizedSelectedTextBackground() const;
     [[nodiscard]] QColor textInsertionPoint() const;
     [[nodiscard]] QColor controlAccent() const;
+    [[nodiscard]] QColor findHighlight() const;
 
 signals:
     void changed();

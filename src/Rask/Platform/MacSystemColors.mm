@@ -37,6 +37,7 @@ SystemColors::Colors resolve()
       colors.unemphasizedSelectedTextBackground = toQColor(NSColor.unemphasizedSelectedTextBackgroundColor);
       colors.textInsertionPoint = toQColor(NSColor.textInsertionPointColor);
       colors.controlAccent = toQColor(NSColor.controlAccentColor);
+      colors.findHighlight = toQColor(NSColor.findHighlightColor);
     }];
     return colors;
 }

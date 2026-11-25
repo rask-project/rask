@@ -51,7 +51,9 @@ Guidance for AI agents working in this repository.
   - `Rask.Controls` — QML only: `SidebarLayout` (System Settings layout:
     transparent sidebar over the window blur, opaque content pane, section
     title beside the window buttons), `SidebarItem`, `FormGroup`, `FormRow`
-    (from Konsoll's Settings window). No icons or other app assets: apps
+    (from Konsoll's Settings window), `SearchBar` (find and replace; it
+    only reports what the user asks for, the app runs the search). No
+    icons or other app assets: apps
     pass their own (`iconName` / `iconSource`). Colors
     follow `Application.styleHints` (typed, so qmllint can check it); the
     selected sidebar row uses the delegate's own `palette.highlight`.
