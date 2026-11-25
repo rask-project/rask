@@ -121,10 +121,12 @@ void showAlert(
         done(buttonIndex([alert runModal]));
         return;
     }
-    // The block keeps its own copy of the callback.
+    // The sheet answers after this returns. A block captures a C++ reference
+    // as a reference, so it must capture a copy: a local, copied into the block.
+    const std::function<void(qint32 button)> callback{done};
     [alert beginSheetModalForWindow:parent
                   completionHandler:^(NSModalResponse response) {
-                    done(buttonIndex(response));
+                    callback(buttonIndex(response));
                   }];
 }
 

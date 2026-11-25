@@ -164,6 +164,10 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
   shown again.
 - AppKit colors expect **0.0–1.0** components: use `QColor::redF()`/
   `greenF()`/`blueF()`.
+- **Blocks capture C++ references as references.** A block that runs later
+  (sheet completion handlers, notifications, dispatch) must capture a local
+  copy, never a `const T &` parameter: the referenced object is gone by then
+  (a dangling `std::function` throws `bad_function_call` and aborts).
 - Menu-bar texts that Qt moves into the app menu ("About…", "Settings…",
   "Quit…") stay in English; other app-menu items are added natively (see
   "Check for Updates…").
