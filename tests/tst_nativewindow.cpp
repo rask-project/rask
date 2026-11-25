@@ -13,6 +13,8 @@ void TestNativeWindow::defaults()
     QVERIFY(nativeWindow.unifiedToolbar());
     QVERIFY(nativeWindow.movable());
     QCOMPARE(nativeWindow.leadingInset(), 0.0);
+    QVERIFY(nativeWindow.representedFile().isEmpty());
+    QVERIFY(!nativeWindow.documentEdited());
 }
 
 void TestNativeWindow::notifiesOnlyOnChange()
@@ -27,6 +29,26 @@ void TestNativeWindow::notifiesOnlyOnChange()
     QCOMPARE(blurSpy.count(), 1);
     QCOMPARE(alphaSpy.count(), 1);
     QVERIFY(!nativeWindow.blur());
+}
+
+void TestNativeWindow::documentPropertiesNotifyOnlyOnChange()
+{
+    QWindow window;
+    rask::NativeWindow nativeWindow;
+    nativeWindow.setWindow(&window);
+    const QSignalSpy fileSpy{&nativeWindow, &rask::NativeWindow::representedFileChanged};
+    const QSignalSpy editedSpy{&nativeWindow, &rask::NativeWindow::documentEditedChanged};
+    const QUrl file{QUrl::fromLocalFile(QStringLiteral("/tmp/notes.txt"))};
+    nativeWindow.setRepresentedFile(file);
+    nativeWindow.setRepresentedFile(file);
+    nativeWindow.setDocumentEdited(true);
+    nativeWindow.setDocumentEdited(true);
+    window.show();
+    QCoreApplication::processEvents();
+    QCOMPARE(fileSpy.count(), 1);
+    QCOMPARE(editedSpy.count(), 1);
+    QCOMPARE(nativeWindow.representedFile(), file);
+    QVERIFY(nativeWindow.documentEdited());
 }
 
 void TestNativeWindow::toleratesAWindowWithoutNativeHandle()

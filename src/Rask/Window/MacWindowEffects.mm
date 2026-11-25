@@ -280,6 +280,20 @@ void performTitleBarDoubleClick(WId winId)
     }
 }
 
+void setRepresentedFile(WId winId, const QString &path)
+{
+    NSWindow *const window{windowFromId(winId)};
+    if (window == nil) {
+        return;
+    }
+    [window setRepresentedURL:path.isEmpty() ? nil : [NSURL fileURLWithPath:path.toNSString()]];
+}
+
+void setDocumentEdited(WId winId, bool edited)
+{
+    [windowFromId(winId) setDocumentEdited:edited];
+}
+
 bool glassSupported() noexcept
 {
     if (@available(macOS 26.0, *)) {

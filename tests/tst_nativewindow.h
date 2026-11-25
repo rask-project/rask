@@ -10,5 +10,6 @@ class TestNativeWindow : public QObject
 private slots:
     void defaults();
     void notifiesOnlyOnChange();
+    void documentPropertiesNotifyOnlyOnChange();
     void toleratesAWindowWithoutNativeHandle();
 };

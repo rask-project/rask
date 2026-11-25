@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QObject>
 #include <QPointer>
+#include <QUrl>
 #include <QWindow>
 #include <QtQmlIntegration/qqmlintegration.h>
 
@@ -33,6 +34,11 @@ class RASK_WINDOW_EXPORT NativeWindow : public QObject
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
     // Right edge of the window buttons, in the window's coordinates.
     Q_PROPERTY(qreal leadingInset READ leadingInset NOTIFY leadingInsetChanged)
+    // The file the window shows (its icon and path in the Window menu, Mission
+    // Control); empty for none.
+    Q_PROPERTY(QUrl representedFile READ representedFile WRITE setRepresentedFile NOTIFY representedFileChanged)
+    // Unsaved changes: the dot in the close button.
+    Q_PROPERTY(bool documentEdited READ documentEdited WRITE setDocumentEdited NOTIFY documentEditedChanged)
 public:
     explicit NativeWindow(QObject *parent = nullptr);
 
@@ -49,6 +55,10 @@ public:
     [[nodiscard]] bool movable() const noexcept { return hasFlag(Movable); }
     void setMovable(bool movable);
     [[nodiscard]] qreal leadingInset() const noexcept { return m_leadingInset; }
+    [[nodiscard]] QUrl representedFile() const { return m_representedFile; }
+    void setRepresentedFile(const QUrl &file);
+    [[nodiscard]] bool documentEdited() const noexcept { return hasFlag(DocumentEdited); }
+    void setDocumentEdited(bool edited);
 
     // A double click on empty title-bar space: the system's action (zoom,
     // minimize or nothing, per System Settings).
@@ -62,11 +72,14 @@ signals:
     void unifiedToolbarChanged();
     void movableChanged();
     void leadingInsetChanged();
+    void representedFileChanged();
+    void documentEditedChanged();
 
 private:
     static constexpr quint32 Blur{1U << 0U};
     static constexpr quint32 UnifiedToolbar{1U << 1U};
     static constexpr quint32 Movable{1U << 2U};
+    static constexpr quint32 DocumentEdited{1U << 3U};
 
     [[nodiscard]] bool hasFlag(quint32 flag) const noexcept { return (m_flags & flag) != 0U; }
     bool setFlag(quint32 flag, bool on) noexcept;
@@ -74,6 +87,7 @@ private:
     void apply();
 
     QPointer<QWindow> m_window;
+    QUrl m_representedFile;
     qreal m_alpha{0.8};
     qreal m_leadingInset{0.0};
     QRgb m_color{0xff000000U};

@@ -19,6 +19,9 @@ void apply(WId winId, const QColor &color, qreal alpha, bool blur, bool unifiedT
 void setResizable(WId winId, bool resizable);
 void setMovable(WId winId, bool movable);
 void performTitleBarDoubleClick(WId winId);
+// An empty path clears it.
+void setRepresentedFile(WId winId, const QString &path);
+void setDocumentEdited(WId winId, bool edited);
 
 // Liquid Glass (macOS 26+): NSGlassEffectViews behind the Qt content view,
 // above the window blur, so QML draws on top of real glass. Each view is

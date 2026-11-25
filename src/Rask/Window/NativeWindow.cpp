@@ -78,6 +78,24 @@ void NativeWindow::setMovable(bool movable)
     }
 }
 
+void NativeWindow::setRepresentedFile(const QUrl &file)
+{
+    if (m_representedFile == file) {
+        return;
+    }
+    m_representedFile = file;
+    emit representedFileChanged();
+    macwindow::setRepresentedFile(nativeId(), m_representedFile.toLocalFile());
+}
+
+void NativeWindow::setDocumentEdited(bool edited)
+{
+    if (setFlag(DocumentEdited, edited)) {
+        emit documentEditedChanged();
+        macwindow::setDocumentEdited(nativeId(), edited);
+    }
+}
+
 void NativeWindow::titleBarDoubleClicked() const
 {
     macwindow::performTitleBarDoubleClick(nativeId());
@@ -107,6 +125,8 @@ void NativeWindow::apply()
     macwindow::apply(winId, color(), m_alpha, blur(), unifiedToolbar());
     macwindow::setResizable(winId, m_window->minimumSize() != m_window->maximumSize());
     macwindow::setMovable(winId, movable());
+    macwindow::setRepresentedFile(winId, m_representedFile.toLocalFile());
+    macwindow::setDocumentEdited(winId, documentEdited());
 
     const qreal inset{macwindow::windowButtonsTrailingEdge(winId)};
     if (qFuzzyCompare(m_leadingInset, inset)) {
