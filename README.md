@@ -9,7 +9,7 @@ as QML modules named `Rask.*`, built as shared libraries.
 
 | Module | Types |
 |---|---|
-| `Rask.Platform` | `Appearance` (singleton): the user's light/dark choice, saved and applied app-wide |
+| `Rask.Platform` | `Appearance` (singleton): the user's light/dark choice, saved and applied app-wide; `SystemColors` (singleton): AppKit's semantic colors (label, text, selection, insertion point, accent), following light/dark and the accent |
 | `Rask.Window` | `NativeWindow`: translucent, blurred window with the content under the title bar, window-button inset, title-bar double click. `GlassEffect`: native Liquid Glass (macOS 26+) behind a QML item; `GlassSurface`: the same look drawn in QML, the fallback |
 | `Rask.Dialogs` | `AboutDialog` (the system About panel), `AboutQtDialog`, `Alert` (`NSAlert`, as a sheet when given a window) |
 | `Rask.Updater` | `Updater` (singleton): Sparkle updates, "Check for Updates…" in the app menu, beta channel |

@@ -27,7 +27,10 @@ Guidance for AI agents working in this repository.
   into the build tree; used by `Rask.Updater`.
 - `src/Rask/<Module>/` — one directory per module (the path matches the URI):
   - `Rask.Platform` — `Appearance` (QML singleton; QSettings
-    `appearance/colorScheme`, applied with `QStyleHints::setColorScheme`).
+    `appearance/colorScheme`, applied with `QStyleHints::setColorScheme`),
+    `SystemColors` (QML singleton; semantic `NSColor`s resolved for
+    `NSApp.effectiveAppearance`, refreshed on `colorSchemeChanged` and
+    `NSSystemColorsDidChangeNotification`).
   - `Rask.Window` — `NativeWindow` (translucency, blur, unified toolbar,
     `leadingInset`, movable, title-bar double click), `GlassEffect` (a
     `QQuickItem` driving an `NSGlassEffectView`, macOS 26+, inside one

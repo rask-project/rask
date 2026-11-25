@@ -8,6 +8,7 @@ function(rask_add_test name)
 endfunction()
 
 rask_add_test(tst_appearance Rask::Platform)
+rask_add_test(tst_systemcolors Rask::Platform)
 rask_add_test(tst_nativewindow Rask::Window)
 
 rask_add_test(tst_dialogs Rask::Dialogs)
