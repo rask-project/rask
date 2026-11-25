@@ -9,13 +9,9 @@
 # own. Frameworks a library needs (Sparkle, for Rask::Updater) are embedded
 # with it, keeping their own signature. Call it before the app's own
 # POST_BUILD signing step: the bundle's signature must cover the embedded
-# code. Elsewhere it does nothing (the build tree's rpath finds the
-# libraries).
+# code.
 function(rask_embed_libraries target)
     cmake_parse_arguments(PARSE_ARGV 1 arg "" "" "LIBRARIES")
-    if(NOT APPLE)
-        return()
-    endif()
 
     set_property(TARGET ${target} APPEND PROPERTY BUILD_RPATH "@executable_path/../Frameworks")
     set_property(TARGET ${target} APPEND PROPERTY INSTALL_RPATH "@executable_path/../Frameworks")

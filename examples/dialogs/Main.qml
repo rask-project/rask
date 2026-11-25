@@ -46,7 +46,7 @@ ApplicationWindow {
         text: qsTr("Do you want to save the changes made to “Untitled”?")
         informativeText: qsTr("Your changes will be lost if you don’t save them.")
         buttons: [qsTr("Save"), qsTr("Don’t Save"), qsTr("Cancel")]
-        onFinished: button => resultLabel.text = button >= 0 ? buttons[button] : qsTr("not supported")
+        onFinished: button => resultLabel.text = buttons[button]
     }
 
     Alert {

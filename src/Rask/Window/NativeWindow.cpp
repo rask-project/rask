@@ -78,11 +78,6 @@ void NativeWindow::setMovable(bool movable)
     }
 }
 
-bool NativeWindow::translucent() noexcept
-{
-    return macwindow::supported();
-}
-
 void NativeWindow::titleBarDoubleClicked() const
 {
     macwindow::performTitleBarDoubleClick(nativeId());

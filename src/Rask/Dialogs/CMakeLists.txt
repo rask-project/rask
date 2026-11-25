@@ -9,14 +9,11 @@ rask_add_qml_module(Dialogs
         AboutQtDialog.cpp
         Alert.cpp
         NativeDialogs_p.h
-    APPLE_SOURCES
         NativeDialogs.mm
-    OTHER_SOURCES
-        NativeDialogs_stub.cpp
     RESOURCES
         qtlogo-64.png
     PUBLIC_LIBRARIES
         Qt6::Gui
-    APPLE_LIBRARIES
+    LIBRARIES
         "-framework AppKit"
 )

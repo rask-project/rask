@@ -4,8 +4,7 @@
 
 #include <functional>
 
-// The native side of Updater: Sparkle in UpdaterNative.mm, no-ops in
-// UpdaterNative_stub.cpp on other platforms.
+// The native side of Updater (Sparkle, UpdaterNative.mm).
 namespace rask::updaternative
 {
 

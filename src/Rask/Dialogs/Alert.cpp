@@ -54,11 +54,6 @@ void Alert::setWindow(QWindow *window)
     emit windowChanged();
 }
 
-bool Alert::supported() noexcept
-{
-    return nativedialogs::supported();
-}
-
 void Alert::open()
 {
     // A sheet answers after this object may be gone.

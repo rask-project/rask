@@ -37,10 +37,8 @@ target_link_libraries(rask_settings_example
 
 rask_embed_libraries(rask_settings_example LIBRARIES Rask::Controls Rask::Platform Rask::Updater Rask::Window)
 
-if(APPLE)
-    add_custom_command(TARGET rask_settings_example POST_BUILD
-        COMMAND codesign --force --sign - "$<TARGET_BUNDLE_DIR:rask_settings_example>"
-        COMMENT "Signing the settings example ad hoc"
-        VERBATIM
-    )
-endif()
+add_custom_command(TARGET rask_settings_example POST_BUILD
+    COMMAND codesign --force --sign - "$<TARGET_BUNDLE_DIR:rask_settings_example>"
+    COMMENT "Signing the settings example ad hoc"
+    VERBATIM
+)

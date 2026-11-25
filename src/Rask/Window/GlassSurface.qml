@@ -1,7 +1,7 @@
 import QtQuick
 
 // A glass-looking surface drawn in QML, no native view and nothing animated
-// (the fallback where GlassEffect.supported is false):
+// (the fallback where GlassEffect.supported is false, before macOS 26):
 // a translucent body brighter at the top, an optional tint, a soft sheen
 // over the upper half and a thin light rim, kept faint like a native glass
 // pill. It reads as glass over the window's own translucency and blur.

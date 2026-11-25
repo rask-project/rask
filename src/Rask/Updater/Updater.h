@@ -12,11 +12,11 @@ class QQmlEngine;
 namespace rask
 {
 
-// Updates through Sparkle (macOS): "Check for Updates…" in the app menu, the
+// Updates through Sparkle: "Check for Updates…" in the app menu, the
 // release notes, download, EdDSA check, install and relaunch. The feed and
 // key come from the app's Info.plist (SUFeedURL, SUPublicEDKey — see
-// rask_sparkle_plist_keys()); without them, and outside macOS, `available`
-// is false and everything is a no-op.
+// rask_sparkle_plist_keys()); without them `available` is false and
+// everything is a no-op.
 //
 // Pre-releases are posted to the appcast's "beta" channel; only users who
 // turn on `betaUpdates` see them.

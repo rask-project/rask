@@ -27,21 +27,9 @@ jobs:
       - run: pipx install clang-format==19.1.6
       - run: QMLFORMAT="$QT_ROOT_DIR/bin/qmlformat" tools/format-code.sh --check
 
-  build:
-    name: ${{ matrix.name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: macOS (arm64)
-            os: macos-26
-            host: mac
-            arch: clang_64
-          - name: Linux (x86_64)
-            os: ubuntu-24.04
-            host: linux
-            arch: linux_gcc_64
-    runs-on: ${{ matrix.os }}
+  macos:
+    name: macOS (arm64)
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
 
@@ -49,19 +37,14 @@ jobs:
         uses: jurplel/install-qt-action@b344308e4483fc892e0d27b3cd1b173ebdd95f06 # v4
         with:
           version: ${{ env.QT_VERSION }}
-          host: ${{ matrix.host }}
+          host: mac
           target: desktop
-          arch: ${{ matrix.arch }}
+          arch: clang_64
           aqtversion: ${{ env.AQT_VERSION }}
           cache: true
 
-      - name: Install tools (macOS)
-        if: runner.os == 'macOS'
+      - name: Install tools
         run: brew install ninja
-
-      - name: Install tools (Linux)
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y ninja-build libgl1-mesa-dev libxkbcommon-dev
 
       - name: Configure
         run: |

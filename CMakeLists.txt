@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.21.1)
 
-project(Rask VERSION 0.1.0 LANGUAGES CXX)
-if(APPLE)
-    enable_language(OBJCXX)
+project(Rask VERSION 0.1.0 LANGUAGES CXX OBJCXX)
+
+if(NOT APPLE)
+    message(FATAL_ERROR "Rask is macOS only")
 endif()
 
 set(CMAKE_CXX_STANDARD 23)

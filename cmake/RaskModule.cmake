@@ -1,12 +1,9 @@
 # rask_add_qml_module(<Name> URI <uri>
-#     [SOURCES ...]          # every platform
-#     [APPLE_SOURCES ...]    # macOS only (.mm compiled with ARC)
-#     [OTHER_SOURCES ...]    # everywhere else (the no-op stubs)
+#     [SOURCES ...]          # .cpp, private headers, .mm (compiled with ARC)
 #     [PUBLIC_HEADERS ...]   # installed to include/Rask/<Name>
 #     [QML_FILES ...]
 #     [RESOURCES ...]        # files in the library's resources, under qrc:/qt/qml/Rask/<Name>/
-#     [LIBRARIES ...]        # linked privately
-#     [APPLE_LIBRARIES ...]  # linked privately on macOS
+#     [LIBRARIES ...]        # linked privately (e.g. "-framework AppKit")
 #     [PUBLIC_LIBRARIES ...])
 #
 # Defines the shared library rask_<name> (file libRask<Name>.<major>.dylib,
@@ -18,23 +15,18 @@
 function(rask_add_qml_module name)
     cmake_parse_arguments(PARSE_ARGV 1 arg ""
         "URI"
-        "SOURCES;APPLE_SOURCES;OTHER_SOURCES;PUBLIC_HEADERS;QML_FILES;RESOURCES;LIBRARIES;APPLE_LIBRARIES;PUBLIC_LIBRARIES")
+        "SOURCES;PUBLIC_HEADERS;QML_FILES;RESOURCES;LIBRARIES;PUBLIC_LIBRARIES")
 
     string(TOLOWER "${name}" lower)
     string(TOUPPER "${name}" upper)
     set(target rask_${lower})
 
     set(sources ${arg_SOURCES} ${arg_PUBLIC_HEADERS})
-    if(APPLE)
-        list(APPEND sources ${arg_APPLE_SOURCES})
-        foreach(source IN LISTS arg_APPLE_SOURCES)
-            if(source MATCHES "\\.mm$")
-                set_source_files_properties(${source} PROPERTIES COMPILE_OPTIONS -fobjc-arc)
-            endif()
-        endforeach()
-    else()
-        list(APPEND sources ${arg_OTHER_SOURCES})
-    endif()
+    foreach(source IN LISTS arg_SOURCES)
+        if(source MATCHES "\\.mm$")
+            set_source_files_properties(${source} PROPERTIES COMPILE_OPTIONS -fobjc-arc)
+        endif()
+    endforeach()
 
     set(optional_args)
     if(arg_QML_FILES)
@@ -94,9 +86,6 @@ function(rask_add_qml_module name)
         PUBLIC Qt6::Core Qt6::QmlIntegration ${arg_PUBLIC_LIBRARIES}
         PRIVATE ${arg_LIBRARIES}
     )
-    if(APPLE AND arg_APPLE_LIBRARIES)
-        target_link_libraries(${target} PRIVATE ${arg_APPLE_LIBRARIES})
-    endif()
 
     install(TARGETS ${target}
         EXPORT RaskTargets

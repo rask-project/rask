@@ -27,10 +27,8 @@ target_link_libraries(rask_dialogs_example
 
 rask_embed_libraries(rask_dialogs_example LIBRARIES Rask::Dialogs Rask::Updater)
 
-if(APPLE)
-    add_custom_command(TARGET rask_dialogs_example POST_BUILD
-        COMMAND codesign --force --sign - "$<TARGET_BUNDLE_DIR:rask_dialogs_example>"
-        COMMENT "Signing the dialogs example ad hoc"
-        VERBATIM
-    )
-endif()
+add_custom_command(TARGET rask_dialogs_example POST_BUILD
+    COMMAND codesign --force --sign - "$<TARGET_BUNDLE_DIR:rask_dialogs_example>"
+    COMMENT "Signing the dialogs example ad hoc"
+    VERBATIM
+)

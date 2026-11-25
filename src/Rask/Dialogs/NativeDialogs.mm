@@ -52,11 +52,6 @@ qint32 buttonIndex(NSModalResponse response)
 namespace rask::nativedialogs
 {
 
-bool supported() noexcept
-{
-    return true;
-}
-
 void showAboutPanel(const QString &applicationName, const QString &version, const QString &copyright)
 {
     NSMutableDictionary<NSAboutPanelOptionKey, id> *const options{[NSMutableDictionary dictionary]};

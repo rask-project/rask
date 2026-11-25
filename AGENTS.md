@@ -7,9 +7,10 @@ Guidance for AI agents working in this repository.
 - Rask — shared Qt Quick modules (`Rask.*`) for the rask-project apps:
   Konsoll (`../konsoll`), Metronom (`../metronom`) and Tekst (`../tekst`).
 - Toolchain: C++23, Qt ≥ 6.10 (developed on 6.12), CMake ≥ 3.21 + Ninja.
-- Platforms: **macOS, Linux and Android** — Metronom ships on all three, so
-  every module must build everywhere. Native code exists for macOS; elsewhere
-  it is a no-op that says so.
+- Platform: **macOS only** (14.4+, Apple Silicon). There are no stubs or
+  fallbacks for other systems; the top-level `CMakeLists.txt` refuses to
+  configure elsewhere. An app that also targets other platforms (Metronom)
+  links `rask` on macOS only and keeps its own code for the others.
 - Only what at least one app uses goes here, and nothing app-specific (no
   "terminal", "session", "document", "metronome"). A feature moves here when
   a second app needs it, or when it unifies what apps already duplicate.
@@ -33,19 +34,17 @@ Guidance for AI agents working in this repository.
     `NSGlassEffectContainerView` per window between the blur and the Qt
     content view; synced on `afterAnimating`, so nothing per frame when
     unchanged) and `GlassSurface.qml` (the QML-drawn fallback: static, nothing
-    animated). AppKit in `MacWindowEffects.mm`, no-ops in
-    `MacWindowEffects_stub.cpp`.
+    animated). AppKit in `MacWindowEffects.mm`.
   - `Rask.Dialogs` — `AboutDialog` (`orderFrontStandardAboutPanel`),
     `AboutQtDialog` (`NSAlert` + `qtlogo-64.png` in the module's resources),
     `Alert` (`NSAlert`; sheet with a window, app-modal without). AppKit in
-    `NativeDialogs.mm`, no-ops in `NativeDialogs_stub.cpp` (`Alert` emits
-    `finished(-1)` there).
+    `NativeDialogs.mm`.
   - `Rask.Updater` — `Updater` (QML singleton backed by a function-local
     static, `Updater::shared()`): Sparkle's `SPUStandardUpdaterController`,
     beta channel in QSettings `Updates/betaUpdates`, "Check for Updates…"
     added natively to the app menu. Sparkle objects are retained with
     `CFBridgingRetain` and never released (AppKit may call them during quit).
-    Sparkle in `UpdaterNative.mm`, no-ops in `UpdaterNative_stub.cpp`.
+    Sparkle in `UpdaterNative.mm`.
   - `Rask.Controls` — QML only: `SidebarLayout` (System Settings layout:
     transparent sidebar over the window blur, opaque content pane, section
     title beside the window buttons), `SidebarItem`, `FormGroup`, `FormRow`
@@ -81,9 +80,8 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
   `<Rask/<Module>/Header.h>` and installed. Private headers end in `_p.h`
   and are never installed or included by apps.
 - **Native code** sits behind a private C++ header (`*_p.h`) with plain
-  functions: the `.mm` (`APPLE_SOURCES`, compiled with ARC) implements them
-  for macOS, a `_stub.cpp` (`OTHER_SOURCES`) for everything else. The QML
-  type calls them without `#ifdef`s. A new native function needs both.
+  functions, implemented in a `.mm` (listed in `SOURCES`, compiled with ARC).
+  The QML type calls them; Objective-C stays out of public headers.
 - **Versioning:** `VERSION`/`SOVERSION` come from `project(Rask VERSION …)`.
   A change that breaks a public C++ signature, a class layout of an exported
   class, or a QML property/type bumps the major version.
@@ -217,8 +215,6 @@ open "build/Qt_6_12_0_for_macOS_Debug/examples/window/Rask Window.app"
   truth and `WarningsAsErrors: "*"` makes every check an error. No `NOLINT`.
 - Verify per file:
   `clang-tidy -p build/Qt_6_12_0_for_macOS_Debug --config-file=.clang-tidy --extra-arg=-isysroot$(xcrun --show-sdk-path) <file>`.
-  On macOS the `_stub.cpp` files are not compiled, so check them on a Linux
-  build.
 - Test classes are declared in a header (`tst_*.h`), so moc's output is
   compiled on its own instead of being included (and linted) in the test.
 - **`.mm` caveat:** clang-tidy 19 segfaults on `.mm` files while running

@@ -34,11 +34,6 @@ void AboutDialog::setCopyright(const QString &copyright)
     emit copyrightChanged();
 }
 
-bool AboutDialog::supported() noexcept
-{
-    return nativedialogs::supported();
-}
-
 void AboutDialog::open() const
 {
     nativedialogs::showAboutPanel(m_applicationName, m_version, m_copyright);

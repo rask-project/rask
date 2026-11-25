@@ -9,9 +9,9 @@
 namespace rask
 {
 
-// The system's About panel (macOS). Empty properties keep the panel's
+// The system's About panel. Empty properties keep the panel's
 // defaults, read from the bundle: CFBundleName, the version and
-// NSHumanReadableCopyright. Where `supported` is false, show a QML dialog.
+// NSHumanReadableCopyright.
 class RASK_DIALOGS_EXPORT AboutDialog : public QObject
 {
     Q_OBJECT
@@ -20,7 +20,6 @@ class RASK_DIALOGS_EXPORT AboutDialog : public QObject
     // Shown as is, e.g. "Version 1.2.0 (abc1234)".
     Q_PROPERTY(QString version READ version WRITE setVersion NOTIFY versionChanged)
     Q_PROPERTY(QString copyright READ copyright WRITE setCopyright NOTIFY copyrightChanged)
-    Q_PROPERTY(bool supported READ supported CONSTANT)
 public:
     explicit AboutDialog(QObject *parent = nullptr);
 
@@ -30,7 +29,6 @@ public:
     void setVersion(const QString &version);
     [[nodiscard]] QString copyright() const { return m_copyright; }
     void setCopyright(const QString &copyright);
-    [[nodiscard]] static bool supported() noexcept;
 
     Q_INVOKABLE void open() const;
 

@@ -11,8 +11,8 @@ ApplicationWindow {
     height: 420
     visible: true
     title: "Rask Window"
-    flags: nativeWindow.translucent ? (Qt.Window | Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint) : Qt.Window
-    color: nativeWindow.translucent ? "transparent" : palette.window
+    flags: Qt.Window | Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
+    color: "transparent"
     // ApplicationWindow pads its content by the safe area (Qt 6.9+); the title
     // bar draws in the toolbar area itself, like Konsoll's tab strip.
     topPadding: 0
@@ -144,7 +144,7 @@ ApplicationWindow {
             text: "Leading inset"
         }
         Label {
-            text: nativeWindow.translucent ? nativeWindow.leadingInset.toFixed(1) : "not supported"
+            text: nativeWindow.leadingInset.toFixed(1)
         }
     }
 }

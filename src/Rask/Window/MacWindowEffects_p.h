@@ -5,12 +5,10 @@
 #include <QString>
 #include <QWindow>
 
-// The native side of NativeWindow: AppKit in MacWindowEffects.mm, no-ops in
-// MacWindowEffects_stub.cpp on other platforms.
+// The native side of NativeWindow and GlassEffect (AppKit, MacWindowEffects.mm).
 namespace rask::macwindow
 {
 
-[[nodiscard]] bool supported() noexcept;
 // Hidden title, transparent tinted background, optional blur under the whole
 // frame and optional empty unified toolbar with the Qt content above it.
 void apply(WId winId, const QColor &color, qreal alpha, bool blur, bool unifiedToolbar);

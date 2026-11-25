@@ -13,8 +13,8 @@ as QML modules named `Rask.*`, built as shared libraries.
 | `Rask.Updater` | `Updater` (singleton): Sparkle updates, "Check for Updates…" in the app menu, beta channel |
 | `Rask.Controls` | System Settings-style controls: `SidebarLayout` (blurred sidebar + opaque content pane), `SidebarItem`, `FormGroup`, `FormRow` (icons come from the app) |
 
-Everything builds on macOS, Linux and Android; outside macOS the native parts
-are no-ops and report it (`NativeWindow.translucent` is false).
+macOS only (14.4+, Apple Silicon); features of newer systems report it
+(`GlassEffect.supported` is false before macOS 26).
 
 ## Using it in an app
 
@@ -120,7 +120,6 @@ Alert {
 }
 ```
 
-Each has `supported` (false outside macOS): show a QML dialog there.
 
 ### Updates
 
@@ -145,7 +144,7 @@ Without a feed (Debug builds) `Updater.available` is false and nothing runs.
 
 ## Building
 
-Requires Qt 6.10+, CMake 3.21+ and Ninja.
+Requires macOS, Xcode command-line tools, Qt 6.10+, CMake 3.21+ and Ninja.
 
 ```sh
 cmake -B build/Qt_6_12_0_for_macOS_Debug -G Ninja \

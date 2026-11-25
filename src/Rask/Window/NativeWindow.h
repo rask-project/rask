@@ -11,8 +11,7 @@
 namespace rask
 {
 
-// A translucent, blurred window with the content under the title bar (macOS;
-// elsewhere `translucent` is false and the window is left alone).
+// A translucent, blurred window with the content under the title bar.
 //
 // The QML window sets `flags: Qt.Window | Qt.ExpandedClientAreaHint |
 // Qt.NoTitleBarBackgroundHint` and `color: "transparent"`, and starts its own
@@ -32,7 +31,6 @@ class RASK_WINDOW_EXPORT NativeWindow : public QObject
     Q_PROPERTY(bool unifiedToolbar READ unifiedToolbar WRITE setUnifiedToolbar NOTIFY unifiedToolbarChanged)
     // False while QML drags something in the title bar area.
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
-    Q_PROPERTY(bool translucent READ translucent CONSTANT)
     // Right edge of the window buttons, in the window's coordinates.
     Q_PROPERTY(qreal leadingInset READ leadingInset NOTIFY leadingInsetChanged)
 public:
@@ -50,7 +48,6 @@ public:
     void setUnifiedToolbar(bool unifiedToolbar);
     [[nodiscard]] bool movable() const noexcept { return hasFlag(Movable); }
     void setMovable(bool movable);
-    [[nodiscard]] static bool translucent() noexcept;
     [[nodiscard]] qreal leadingInset() const noexcept { return m_leadingInset; }
 
     // A double click on empty title-bar space: the system's action (zoom,

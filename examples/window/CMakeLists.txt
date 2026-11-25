@@ -24,10 +24,8 @@ target_link_libraries(rask_window_example
 
 rask_embed_libraries(rask_window_example LIBRARIES Rask::Platform Rask::Window)
 
-if(APPLE)
-    add_custom_command(TARGET rask_window_example POST_BUILD
-        COMMAND codesign --force --sign - "$<TARGET_BUNDLE_DIR:rask_window_example>"
-        COMMENT "Signing the window example ad hoc"
-        VERBATIM
-    )
-endif()
+add_custom_command(TARGET rask_window_example POST_BUILD
+    COMMAND codesign --force --sign - "$<TARGET_BUNDLE_DIR:rask_window_example>"
+    COMMENT "Signing the window example ad hoc"
+    VERBATIM
+)

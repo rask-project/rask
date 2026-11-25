@@ -17,8 +17,7 @@ namespace rask
 // A native alert (NSAlert). With `window` it opens as a sheet on that window,
 // otherwise app-modal. `finished(button)` reports the index of the chosen
 // button in `buttons`. AppKit maps Return to the first button, Escape to a
-// "Cancel" button and ⌘D to "Don't Save". Where `supported` is false nothing
-// is shown and `finished(-1)` is emitted: use a QML dialog there.
+// "Cancel" button and ⌘D to "Don't Save".
 class RASK_DIALOGS_EXPORT Alert : public QObject
 {
     Q_OBJECT
@@ -30,7 +29,6 @@ class RASK_DIALOGS_EXPORT Alert : public QObject
     Q_PROPERTY(QWindow *window READ window WRITE setWindow NOTIFY windowChanged)
     // The button chosen last time, -1 before the first answer.
     Q_PROPERTY(qint32 result READ result NOTIFY finished)
-    Q_PROPERTY(bool supported READ supported CONSTANT)
 public:
     enum class Style : quint8 {
         Informational,
@@ -52,7 +50,6 @@ public:
     [[nodiscard]] QWindow *window() const { return m_window; }
     void setWindow(QWindow *window);
     [[nodiscard]] qint32 result() const noexcept { return m_result; }
-    [[nodiscard]] static bool supported() noexcept;
 
     Q_INVOKABLE void open();
 

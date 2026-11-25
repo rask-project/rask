@@ -201,11 +201,6 @@ NSGlassEffectView *findGlassView(NSView *hostContent, const QString &identifier)
 namespace rask::macwindow
 {
 
-bool supported() noexcept
-{
-    return true;
-}
-
 void apply(WId winId, const QColor &color, qreal alpha, bool blur, bool unifiedToolbar)
 {
     NSWindow *const window{windowFromId(winId)};
