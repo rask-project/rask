@@ -160,6 +160,8 @@ Item {
             }
             BarButton {
                 icon.name: "textformat"
+                // A wide symbol: room to match the others' height.
+                icon.width: 20
                 checkable: true
                 checked: searchBar.caseSensitive
                 Accessible.name: qsTr("Match case")
