@@ -1,13 +1,13 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Templates as T
+import QtQuick.Window
 
 // A tooltip ("help tag") that looks like macOS's, for the QML style's
-// ToolTip does not: a small rounded tag in its own window (the system draws
-// its shadow and it may go past the window's edge), shown under the pointer
-// after it rests on the parent, gone when the pointer leaves or presses.
+// ToolTip does not: a small rounded tag in a transparent window of its own
+// (the system draws its shadow; it may go past the window's edge), shown
+// under the pointer after it rests on the parent, gone when the pointer
+// leaves or presses.
 // Put it inside the control it explains:
 //
 //     ToolButton { HelpTag { text: qsTr("Split Side by Side") } }
@@ -30,7 +30,7 @@ Item {
                 showTimer.restart();
             } else {
                 showTimer.stop();
-                tip.close();
+                tip.visible = false;
             }
         }
     }
@@ -41,7 +41,7 @@ Item {
         onActiveChanged: {
             if (active) {
                 showTimer.stop();
-                tip.close();
+                tip.visible = false;
             }
         }
     }
@@ -53,61 +53,50 @@ Item {
         onTriggered: {
             if (tag.text === "")
                 return;
-            tip.x = hover.point.position.x;
-            tip.y = hover.point.position.y + 20;
-            tip.open();
+            const point = tag.mapToGlobal(hover.point.position.x, hover.point.position.y);
+            tip.x = point.x;
+            tip.y = point.y + 20;
+            tip.visible = true;
         }
     }
 
     onEnabledChanged: {
         if (!enabled)
-            tip.close();
+            tip.visible = false;
     }
 
-    T.ToolTip {
+    // Transparent around the rounded tag: the system's shadow follows its shape.
+    Window {
         id: tip
 
-        popupType: Popup.Window
-        text: tag.text
-        delay: 0
-        timeout: 10000
-        margins: 0
-        topPadding: 4
-        bottomPadding: 4
-        leftPadding: 8
-        rightPadding: 8
-        implicitWidth: Math.min(implicitContentWidth + leftPadding + rightPadding, 360)
-        implicitHeight: implicitContentHeight + topPadding + bottomPadding
-        closePolicy: T.Popup.NoAutoClose
+        transientParent: tag.Window.window
+        flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WindowTransparentForInput | Qt.WindowDoesNotAcceptFocus
+        color: "transparent"
+        width: bubble.width
+        height: bubble.height
+        visible: false
 
-        enter: Transition {
-            NumberAnimation {
-                property: "opacity"
-                to: 1
-                duration: 0
-            }
-        }
-        exit: Transition {
-            NumberAnimation {
-                property: "opacity"
-                from: 1
-                to: 0
-                duration: 120
-            }
-        }
+        Rectangle {
+            id: bubble
 
-        contentItem: Text {
-            text: tip.text
-            font.pixelSize: 11
-            color: tag.dark ? Qt.rgba(1, 1, 1, 0.9) : Qt.rgba(0, 0, 0, 0.85)
-            wrapMode: Text.Wrap
-        }
-
-        background: Rectangle {
+            width: label.width + 16
+            height: label.implicitHeight + 8
             radius: 6
             color: tag.dark ? "#2c2c2e" : "#f6f6f6"
             border.width: 1
             border.color: tag.dark ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(0, 0, 0, 0.12)
+
+            Text {
+                id: label
+
+                x: 8
+                anchors.verticalCenter: parent.verticalCenter
+                width: Math.min(implicitWidth, 480)
+                text: tag.text
+                font.pixelSize: 11
+                color: tag.dark ? Qt.rgba(1, 1, 1, 0.9) : Qt.rgba(0, 0, 0, 0.85)
+                elide: Text.ElideMiddle
+            }
         }
     }
 }
