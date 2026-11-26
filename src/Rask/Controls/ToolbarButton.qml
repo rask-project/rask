@@ -47,13 +47,25 @@ T.ToolButton {
         text: button.toolTip
     }
 
-    contentItem: IconImage {
-        name: button.icon.name
-        source: button.icon.source
-        sourceSize.width: button.icon.width
-        sourceSize.height: button.icon.height
-        fillMode: Image.Pad
-        color: button.icon.color
-        opacity: button.enabled ? 0.85 : 0.3
+    // IconImage draws the symbol once, in the button's state then (faded
+    // when disabled): a new one for each state.
+    contentItem: Item {
+        implicitWidth: button.icon.width
+        implicitHeight: button.icon.height
+
+        Repeater {
+            model: [button.enabled]
+
+            IconImage {
+                anchors.centerIn: parent
+                name: button.icon.name
+                source: button.icon.source
+                sourceSize.width: button.icon.width
+                sourceSize.height: button.icon.height
+                fillMode: Image.Pad
+                color: button.icon.color
+                opacity: button.enabled ? 0.85 : 0.3
+            }
+        }
     }
 }
