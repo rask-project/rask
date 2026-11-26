@@ -48,11 +48,13 @@ struct Observer::Token {
 
 Observer::Observer(const std::function<void()> &onChange) : m_token{std::make_unique<Token>()}
 {
+    // A copy for the block: it captures a reference as a reference, and `onChange` dies with this call.
+    const std::function<void()> callback{onChange};
     m_token->observer = [NSNotificationCenter.defaultCenter addObserverForName:NSSystemColorsDidChangeNotification
                                                                         object:nil
                                                                          queue:NSOperationQueue.mainQueue
                                                                     usingBlock:^(NSNotification *) {
-                                                                      onChange();
+                                                                      callback();
                                                                     }];
 }
 
