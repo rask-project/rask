@@ -13,4 +13,6 @@ private slots:
     void quitGuardLetsAutomaticQuitsThrough();
     void fileOpenHandlerHoldsFilesUntilConnected();
     void recentDocumentsKeepsTheLatestFirst();
+    void defaultApplicationNeedsADocumentType();
+    void commandLineToolNeedsABundledTool();
 };

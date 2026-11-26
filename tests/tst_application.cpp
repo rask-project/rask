@@ -5,6 +5,8 @@
 #include <QSettings>
 #include <QSignalSpy>
 #include <QTest>
+#include <Rask/Application/CommandLineTool.h>
+#include <Rask/Application/DefaultApplication.h>
 #include <Rask/Application/FileOpenHandler.h>
 #include <Rask/Application/QuitGuard.h>
 #include <Rask/Application/RecentDocuments.h>
@@ -71,6 +73,19 @@ void TestApplication::recentDocumentsKeepsTheLatestFirst()
     QCOMPARE(changes.count(), 13);
     recent.clear();
     QVERIFY(rask::RecentDocuments::files().isEmpty());
+}
+
+// The test is no bundle: it declares no document types and bundles no tools.
+void TestApplication::defaultApplicationNeedsADocumentType()
+{
+    QVERIFY(!rask::DefaultApplication::isDefault(QStringLiteral("Text")));
+    QVERIFY(!rask::DefaultApplication::makeDefault(QStringLiteral("Text")));
+}
+
+void TestApplication::commandLineToolNeedsABundledTool()
+{
+    QVERIFY(!rask::CommandLineTool::isInstalled(QStringLiteral("rask-test-tool")));
+    QVERIFY(!rask::CommandLineTool::install(QStringLiteral("rask-test-tool")));
 }
 
 QTEST_MAIN(TestApplication)

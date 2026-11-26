@@ -1,4 +1,5 @@
 #include "FileOpenHandler.h"
+#include "MacServices_p.h"
 
 #include <QCoreApplication>
 #include <QFileOpenEvent>
@@ -11,10 +12,16 @@ namespace rask
 FileOpenHandler::FileOpenHandler(QObject *parent) : QObject(parent)
 {
     QCoreApplication::instance()->installEventFilter(this);
+    macservices::install([this](const QList<QUrl> &files) {
+        for (const QUrl &file : files) {
+            enqueue(file);
+        }
+    });
 }
 
 FileOpenHandler::~FileOpenHandler()
 {
+    macservices::remove();
     if (QCoreApplication::instance() != nullptr) {
         QCoreApplication::instance()->removeEventFilter(this);
     }
@@ -27,13 +34,18 @@ bool FileOpenHandler::eventFilter(QObject *watched, QEvent *event)
     }
     const QUrl url{static_cast<const QFileOpenEvent *>(event)->url()};
     if (!url.isEmpty()) {
-        // Several files of one request come as one event each: deliver them together.
-        if (m_pending.isEmpty()) {
-            QTimer::singleShot(0, this, &FileOpenHandler::deliver);
-        }
-        m_pending.emplace_back(url);
+        enqueue(url);
     }
     return true;
+}
+
+void FileOpenHandler::enqueue(const QUrl &file)
+{
+    // Several files of one request come one by one: deliver them together.
+    if (m_pending.isEmpty()) {
+        QTimer::singleShot(0, this, &FileOpenHandler::deliver);
+    }
+    m_pending.emplace_back(file);
 }
 
 void FileOpenHandler::connectNotify(const QMetaMethod &signal)

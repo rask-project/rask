@@ -71,9 +71,16 @@ Guidance for AI agents working in this repository.
     filter: `QuitGuard` (the system's quit request arrives as a spontaneous
     `QEvent::Quit`; ignoring it cancels the termination, and `quit()` goes
     ahead through `QCoreApplication::quit()`), `FileOpenHandler`
-    (`QFileOpenEvent`s, held until something connects), `RecentDocuments`
+    (`QFileOpenEvent`s, held until something connects; also the Services
+    provider for NSMessage `openFiles`, "Open in <App>" on the Finder's
+    context menu, in `MacServices.mm`), `RecentDocuments`
     (QSettings `recentDocuments`, also noted to `NSDocumentController` for
-    the Dock menu; AppKit in `MacRecentDocuments.mm`).
+    the Dock menu; AppKit in `MacRecentDocuments.mm`), `DefaultApplication`
+    (the app as the default for the content types of one of its
+    `CFBundleDocumentTypes`, by name; `MacDefaultApplication.mm`) and
+    `CommandLineTool` (a link in `/usr/local/bin` to a tool the app bundles
+    in `Contents/Resources/bin`, with an administrator's password when
+    needed; `MacCommandLineTool.mm`).
 - `examples/<name>/` — small apps (`window`, `dialogs`, `settings`, `documents`), built as bundles
   that embed the libraries like a real app does. Modal panels and sheets are
   checked by hand there; tests cover properties only.
