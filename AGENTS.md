@@ -60,7 +60,9 @@ Guidance for AI agents working in this repository.
     QML), `ToolbarGroup`/`ToolbarButton` (a glass capsule of icon buttons in
     the title bar, as in Xcode's toolbar; icons by `icon.name`, which Qt
     resolves to SF Symbols on macOS; the window stays put while the pointer
-    is over it). No
+    is over it), `HelpTag` (a tooltip drawn like AppKit's, in a window of its
+    own for the system shadow, under the pointer; the controls use it instead
+    of the style's `ToolTip`). No
     icons or other app assets: apps
     pass their own (`iconName` / `iconSource`). Colors
     follow `Application.styleHints` (typed, so qmllint can check it); the

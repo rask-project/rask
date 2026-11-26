@@ -69,12 +69,12 @@ ApplicationWindow {
 
             ToolbarButton {
                 icon.name: "chevron.backward"
-                ToolTip.text: "Back"
+                toolTip: "Back"
             }
             ToolbarButton {
                 icon.name: "chevron.forward"
                 enabled: false
-                ToolTip.text: "Forward"
+                toolTip: "Forward"
             }
         }
 

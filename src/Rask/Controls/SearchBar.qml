@@ -91,10 +91,11 @@ Item {
                 checked: searchBar.caseSensitive
                 flat: true
                 Accessible.name: qsTr("Match case")
-                ToolTip.text: qsTr("Match case")
-                ToolTip.visible: hovered
-                ToolTip.delay: 600
                 onToggled: searchBar.caseSensitive = checked
+
+                HelpTag {
+                    text: qsTr("Match case")
+                }
             }
             Button {
                 text: ".*"
@@ -102,10 +103,11 @@ Item {
                 checked: searchBar.regularExpression
                 flat: true
                 Accessible.name: qsTr("Regular expression")
-                ToolTip.text: qsTr("Regular expression")
-                ToolTip.visible: hovered
-                ToolTip.delay: 600
                 onToggled: searchBar.regularExpression = checked
+
+                HelpTag {
+                    text: qsTr("Regular expression")
+                }
             }
             Button {
                 text: "‹"

@@ -62,9 +62,8 @@ T.AbstractButton {
         onTapped: tab.contextMenuRequested()
     }
 
-    ToolTip {
-        visible: tab.hovered && !tab.dragging && (tab.toolTip !== "" || titleLabel.truncated)
-        delay: 600
+    HelpTag {
+        enabled: !tab.dragging && (tab.toolTip !== "" || titleLabel.truncated)
         text: tab.toolTip !== "" ? tab.toolTip : tab.title
     }
 

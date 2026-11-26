@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Controls.impl
 import QtQuick.Templates as T
 
@@ -11,6 +10,8 @@ import QtQuick.Templates as T
 T.ToolButton {
     id: button
 
+    // Shown in a HelpTag when the pointer rests on the button.
+    property string toolTip
     readonly property bool dark: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
 
     implicitWidth: 40
@@ -21,9 +22,6 @@ T.ToolButton {
     icon.width: 17
     icon.height: 17
     icon.color: dark ? "white" : "black"
-
-    ToolTip.visible: hovered && ToolTip.text !== ""
-    ToolTip.delay: 600
 
     background: Item {
         Rectangle {
@@ -43,6 +41,10 @@ T.ToolButton {
             color: button.dark ? "white" : "black"
             opacity: button.dark ? 0.18 : 0.12
         }
+    }
+
+    HelpTag {
+        text: button.toolTip
     }
 
     contentItem: IconImage {
