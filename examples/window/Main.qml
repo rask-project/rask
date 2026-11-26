@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Rask.Controls
 import Rask.Platform
 import Rask.Window
 
@@ -18,7 +19,7 @@ ApplicationWindow {
     topPadding: 0
 
     NativeWindow {
-        id: nativeWindow
+        id: native
 
         window: root
         color: Appearance.dark ? "#1c1c1e" : "#f5f5f7"
@@ -54,12 +55,32 @@ ApplicationWindow {
         }
 
         TapHandler {
-            onDoubleTapped: nativeWindow.titleBarDoubleClicked()
+            onDoubleTapped: native.titleBarDoubleClicked()
+        }
+
+        // Toolbar buttons in a glass capsule, with system icons (SF Symbols).
+        ToolbarGroup {
+            id: navigation
+
+            anchors.left: parent.left
+            anchors.leftMargin: native.leadingInset + 12
+            anchors.verticalCenter: parent.verticalCenter
+            nativeWindow: native
+
+            ToolbarButton {
+                icon.name: "chevron.backward"
+                ToolTip.text: "Back"
+            }
+            ToolbarButton {
+                icon.name: "chevron.forward"
+                enabled: false
+                ToolTip.text: "Forward"
+            }
         }
 
         Label {
-            anchors.left: parent.left
-            anchors.leftMargin: nativeWindow.leadingInset + 12
+            anchors.left: navigation.right
+            anchors.leftMargin: 12
             anchors.verticalCenter: parent.verticalCenter
             text: root.title
             font.bold: true
@@ -146,7 +167,7 @@ ApplicationWindow {
             text: "Leading inset"
         }
         Label {
-            text: nativeWindow.leadingInset.toFixed(1)
+            text: native.leadingInset.toFixed(1)
         }
     }
 }

@@ -24,6 +24,7 @@ target_link_libraries(rask_window_example
     PRIVATE
         Qt6::Quick
         Qt6::QuickControls2
+        Rask::Controls
         Rask::Platform
         Rask::Window
 )

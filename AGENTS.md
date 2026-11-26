@@ -57,7 +57,10 @@ Guidance for AI agents working in this repository.
     `TabStrip`/`TabStripButton` (title-bar tabs from Konsoll: wrapping rows,
     drag to reorder, drag out to another window; tabs are any objects with
     `title`/`modified`/`toolTip`; glass from `Rask.Window`, glyphs drawn in
-    QML). No
+    QML), `ToolbarGroup`/`ToolbarButton` (a glass capsule of icon buttons in
+    the title bar, as in Xcode's toolbar; icons by `icon.name`, which Qt
+    resolves to SF Symbols on macOS; the window stays put while the pointer
+    is over it). No
     icons or other app assets: apps
     pass their own (`iconName` / `iconSource`). Colors
     follow `Application.styleHints` (typed, so qmllint can check it); the
