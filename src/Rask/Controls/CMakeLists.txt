@@ -6,6 +6,7 @@ rask_add_qml_module(Controls
         FormGroup.qml
         FormRow.qml
         HelpTag.qml
+        OverlayScrollBar.qml
         SearchBar.qml
         SidebarItem.qml
         SidebarLayout.qml
@@ -16,5 +17,6 @@ rask_add_qml_module(Controls
     PUBLIC_LIBRARIES
         Qt6::Quick
         Qt6::QuickControls2
+        Rask::Platform
         Rask::Window
 )

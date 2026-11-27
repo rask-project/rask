@@ -16,6 +16,8 @@ import QtQuick.Layouts
 //       sections: [{ title: qsTr("General"), iconSource: Qt.resolvedUrl("icons/general.svg") }]
 //       ColumnLayout { FormGroup { FormRow { … } } }
 //   }
+//
+// A page taller than the content pane scrolls.
 Item {
     id: layout
 
@@ -102,7 +104,6 @@ Item {
         ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.bottomMargin: 24
 
             spacing: 0
 
@@ -121,15 +122,32 @@ Item {
                 elide: Text.ElideRight
             }
 
-            StackLayout {
-                id: stack
+            Flickable {
+                id: scroller
+
+                readonly property Item page: stack.children[stack.currentIndex] ?? null
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: 24
-                Layout.rightMargin: 24
 
-                currentIndex: layout.currentIndex
+                clip: true
+                contentWidth: width
+                // The page's bottom margin scrolls with it.
+                contentHeight: stack.height + 24
+                boundsBehavior: Flickable.StopAtBounds
+
+                ScrollBar.vertical: OverlayScrollBar {}
+
+                StackLayout {
+                    id: stack
+
+                    x: 24
+                    width: scroller.width - 48
+                    height: Math.max(scroller.height - 24, scroller.page?.implicitHeight ?? 0)
+
+                    currentIndex: layout.currentIndex
+                    onCurrentIndexChanged: scroller.contentY = 0
+                }
             }
         }
     }

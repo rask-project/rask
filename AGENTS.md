@@ -62,7 +62,9 @@ Guidance for AI agents working in this repository.
     resolves to SF Symbols on macOS; the window stays put while the pointer
     is over it), `HelpTag` (a tooltip drawn like AppKit's, in a window of its
     own for the system shadow, under the pointer; the controls use it instead
-    of the style's `ToolTip`). No
+    of the style's `ToolTip`), `OverlayScrollBar` (no track, a handle that
+    shows while scrolling, in `SystemColors.label`; the pages of
+    `SidebarLayout` scroll with it). No
     icons or other app assets: apps
     pass their own (`iconName` / `iconSource`). Colors
     follow `Application.styleHints` (typed, so qmllint can check it); the
