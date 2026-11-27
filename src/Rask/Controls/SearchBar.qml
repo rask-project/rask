@@ -134,7 +134,7 @@ Item {
         rowSpacing: 6
         columnSpacing: 6
 
-        TextField {
+        FilledTextField {
             id: findField
 
             Layout.fillWidth: true
@@ -197,7 +197,7 @@ Item {
             }
         }
 
-        TextField {
+        FilledTextField {
             id: replaceField
 
             visible: searchBar.replacing

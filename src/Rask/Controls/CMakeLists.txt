@@ -5,6 +5,7 @@ rask_add_qml_module(Controls
     QML_FILES
         FormGroup.qml
         FormRow.qml
+        FilledTextField.qml
         HelpTag.qml
         OverlayScrollBar.qml
         SearchBar.qml

@@ -52,8 +52,10 @@ Guidance for AI agents working in this repository.
   - `Rask.Controls` — QML only: `SidebarLayout` (System Settings layout:
     transparent sidebar over the window blur, opaque content pane, section
     title beside the window buttons), `SidebarItem`, `FormGroup`, `FormRow`
-    (from Konsoll's Settings window), `SearchBar` (find and replace; it
-    only reports what the user asks for, the app runs the search),
+    (from Konsoll's Settings window), `FilledTextField` (macOS's filled
+    text field: a rounded fill, no border or focus ring, a clear button
+    while it holds text), `SearchBar` (find and replace, its fields filled
+    ones; it only reports what the user asks for, the app runs the search),
     `TabStrip`/`TabStripButton` (title-bar tabs from Konsoll: wrapping rows,
     drag to reorder, drag out to another window; tabs are any objects with
     `title`/`modified`/`toolTip`; glass from `Rask.Window`, glyphs drawn in
