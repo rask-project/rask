@@ -111,7 +111,7 @@ Item {
         }
     }
 
-    implicitHeight: column.implicitHeight + 12
+    implicitHeight: column.implicitHeight + 24
 
     Rectangle {
         anchors.left: parent.left
@@ -127,8 +127,8 @@ Item {
         anchors.fill: parent
         anchors.leftMargin: 12
         anchors.rightMargin: 12
-        anchors.topMargin: 6
-        anchors.bottomMargin: 6
+        anchors.topMargin: 12
+        anchors.bottomMargin: 12
         spacing: 6
 
         RowLayout {
