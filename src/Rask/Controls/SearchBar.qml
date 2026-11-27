@@ -121,7 +121,8 @@ Item {
         color: searchBar.separatorColor
     }
 
-    ColumnLayout {
+    // The fields in a column of their own, so they line up; the buttons beside them.
+    GridLayout {
         id: column
 
         anchors.fill: parent
@@ -129,35 +130,25 @@ Item {
         anchors.rightMargin: 12
         anchors.topMargin: 12
         anchors.bottomMargin: 12
-        spacing: 6
+        columns: 2
+        rowSpacing: 6
+        columnSpacing: 6
 
+        TextField {
+            id: findField
+
+            Layout.fillWidth: true
+            placeholderText: qsTr("Find")
+            Accessible.name: qsTr("Find")
+            Keys.onReturnPressed: event => (event.modifiers & Qt.ShiftModifier) ? searchBar.previous() : searchBar.next()
+            Keys.onEnterPressed: searchBar.next()
+            Keys.onEscapePressed: searchBar.done()
+        }
         RowLayout {
+            id: findButtons
+
             spacing: 6
 
-            TextField {
-                id: findField
-
-                Layout.fillWidth: true
-                placeholderText: qsTr("Find")
-                Accessible.name: qsTr("Find")
-                Keys.onReturnPressed: event => (event.modifiers & Qt.ShiftModifier) ? searchBar.previous() : searchBar.next()
-                Keys.onEnterPressed: searchBar.next()
-                Keys.onEscapePressed: searchBar.done()
-            }
-            Label {
-                text: {
-                    if (searchBar.error !== "")
-                        return searchBar.error;
-                    if (searchBar.text === "")
-                        return "";
-                    const count = searchBar.complete ? searchBar.matchCount : qsTr("%1+").arg(searchBar.matchCount);
-                    if (searchBar.currentMatch >= 0)
-                        return qsTr("%1 of %2").arg(searchBar.currentMatch + 1).arg(count);
-                    return searchBar.matchCount === 1 && searchBar.complete ? qsTr("1 match") : qsTr("%1 matches").arg(count);
-                }
-                color: searchBar.error !== "" ? "#ff453a" : searchBar.secondaryTextColor
-                font.pixelSize: 11
-            }
             BarButton {
                 icon.name: "textformat"
                 // A wide symbol: room to match the others' height.
@@ -206,21 +197,26 @@ Item {
             }
         }
 
+        TextField {
+            id: replaceField
+
+            visible: searchBar.replacing
+            Layout.fillWidth: true
+            placeholderText: qsTr("Replace")
+            Accessible.name: qsTr("Replace")
+            Keys.onReturnPressed: searchBar.replace()
+            Keys.onEnterPressed: searchBar.replace()
+            Keys.onEscapePressed: searchBar.done()
+        }
+        // As wide as the buttons above, leaving the rest to the fields.
         RowLayout {
             visible: searchBar.replacing
+            Layout.fillWidth: false
+            Layout.preferredWidth: findButtons.implicitWidth
             spacing: 6
 
-            TextField {
-                id: replaceField
-
-                Layout.fillWidth: true
-                placeholderText: qsTr("Replace")
-                Accessible.name: qsTr("Replace")
-                Keys.onReturnPressed: searchBar.replace()
-                Keys.onEnterPressed: searchBar.replace()
-                Keys.onEscapePressed: searchBar.done()
-            }
             BarButton {
+                Layout.fillWidth: true
                 text: qsTr("Replace")
                 available: searchBar.currentMatch >= 0
                 onClicked: {
@@ -229,6 +225,7 @@ Item {
                 }
             }
             BarButton {
+                Layout.fillWidth: true
                 text: qsTr("All")
                 available: searchBar.matchCount > 0
                 Accessible.name: qsTr("Replace all")
@@ -238,6 +235,36 @@ Item {
                         searchBar.replaceAll();
                 }
             }
+        }
+    }
+
+    // The count, a badge over the find field's top right corner (out of the
+    // layout: nothing moves as it changes).
+    Rectangle {
+        visible: countLabel.text !== ""
+        x: column.x + findField.x + findField.width - width - 8
+        y: column.y + findField.y - height / 2
+        width: countLabel.implicitWidth + 12
+        height: countLabel.implicitHeight + 2
+        radius: height / 2
+        color: searchBar.error !== "" ? "#ff453a" : systemPalette.accent
+
+        Label {
+            id: countLabel
+
+            anchors.centerIn: parent
+            text: {
+                if (searchBar.error !== "")
+                    return searchBar.error;
+                if (searchBar.text === "")
+                    return "";
+                const count = searchBar.complete ? searchBar.matchCount : qsTr("%1+").arg(searchBar.matchCount);
+                if (searchBar.currentMatch >= 0)
+                    return qsTr("%1 of %2").arg(searchBar.currentMatch + 1).arg(count);
+                return searchBar.matchCount === 1 && searchBar.complete ? qsTr("1 match") : qsTr("%1 matches").arg(count);
+            }
+            color: "white"
+            font.pixelSize: 10
         }
     }
 }
